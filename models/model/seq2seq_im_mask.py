@@ -9,6 +9,7 @@ from torch.nn.utils.rnn import pad_sequence, pack_padded_sequence, pad_packed_se
 from model.seq2seq import Module as Base
 from models.utils.metric import compute_f1, compute_exact
 from gen.utils.image_util import decompress_mask
+# from utils.download_feat import download_hf_patterns
 
 import constants
 classes = [0] + constants.OBJECTS + ['AppleSliced', 'ShowerCurtain', 'TomatoSliced', 'LettuceSliced', 'Lamp', 'ShowerHead', 'EggCracked', 'BreadSliced', 'PotatoSliced', 'Faucet']
@@ -131,16 +132,25 @@ class Module(Base):
                 # low-level valid interact
                 feat['action_low_valid_interact'].append([a['valid_interact'] for a in ex['num']['action_low']])
 
+            # 如果root不存在，下载
+            # if not os.path.exists(self.get_task_root(ex)):
+            #     download_hf_patterns(
+            #         repo_id="byeonghwikim/abp_dataset",
+            #         local_dir=self.args.data,
+            #         folder_pattern=f"{ex['split']}/{ex['task_type']}*/**",
+            #         repo_type="dataset"
+            #     )
+
             # load Resnet features from disk
             if load_frames and not self.test_mode:
                 root = self.get_task_root(ex)
-                if swapColor in [0]:
-                    im = torch.load(os.path.join(root, self.feat_pt))
-                elif swapColor in [1, 2]:
-                    im = torch.load(os.path.join(root, 'feat_conv_colorSwap{}_panoramic.pt'.format(swapColor)))
-                elif swapColor in [3, 4, 5, 6]:
-                    im = torch.load(os.path.join(root, 'feat_conv_onlyAutoAug{}_panoramic.pt'.format(swapColor - 2)))
-
+                # if swapColor in [0]:
+                im = torch.load(os.path.join(root, self.feat_pt))
+                # elif swapColor in [1, 2]:
+                #     im = torch.load(os.path.join(root, 'feat_conv_colorSwap{}_panoramic.pt'.format(swapColor)))
+                # elif swapColor in [3, 4, 5, 6]:
+                #     im = torch.load(os.path.join(root, 'feat_conv_onlyAutoAug{}_panoramic.pt'.format(swapColor - 2)))
+                
                 feat['frames'].append(im[2][:len(feat['action_low'][-1])])
 
                 feat['frames_left'].append(im[0][:len(feat['action_low'][-1])])

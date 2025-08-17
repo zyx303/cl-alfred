@@ -6,6 +6,7 @@ from methods.der import DER
 from methods.xder import XDER
 from methods.cama_nodc import CAMA_NODC
 from methods.cama import CAMA
+from methods.sdlora import SDLoRA
 
 
 def select_method(args, n_classes, model):
@@ -20,6 +21,7 @@ def select_method(args, n_classes, model):
         'xder': XDER,
         'cama_nodc': CAMA_NODC,
         'cama': CAMA,
+        'sdlora': SDLoRA,
     }
 
     if args.mode in methods:

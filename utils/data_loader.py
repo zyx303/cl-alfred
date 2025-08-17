@@ -25,7 +25,7 @@ class StreamDataset(Dataset):
     @torch.no_grad()
     def get_data(self):
         data = dict()
-        data['batch'] = [(img['task'], random.choice(range(7))) for img in self.images]
+        data['batch'] = [(img['task'], 0) for img in self.images]
         return data
 
 

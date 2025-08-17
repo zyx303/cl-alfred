@@ -1,7 +1,8 @@
 import torch
 import numpy as np
 import torch.nn.functional as F
-
+from rich import print
+import time
 from methods.er_baseline import ER
 from utils.data_loader import DistillationMemory
 
@@ -122,7 +123,10 @@ class CAMA(ER):
             data = self.memory.get_batch(batch_size, stream_batch_size)
             batch = [(self.model.load_task_json(task), swapColor) for task, swapColor in data['batch']]
             task_ids = [f'{task["task"]}/{task["repeat_idx"]}' for task, swapColor in data['batch']]
+            # print("[blue]feature start [/blue]")
+            start_time = time.time()
             feat = self.model.featurize(batch)
+            # print(f"[blue]feature time: {time.time() - start_time}[/blue]")
             out = self.model.forward(feat)
 
             # logit

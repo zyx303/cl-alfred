@@ -12,10 +12,15 @@ from data.preprocess import Dataset
 from importlib import import_module
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from models.utils.helper_utils import optimizer_to
+import debugpy
 
-torch.backends.cudnn.enabled = False
+
+torch.backends.cudnn.enabled = True
 
 if __name__ == '__main__':
+    if os.getenv('debug'):
+        debugpy.listen(5678)
+        debugpy.wait_for_client()
     # parser
     parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
 
@@ -112,6 +117,12 @@ if __name__ == '__main__':
     parser.add_argument("--eta", type=float, default=0.001)
     parser.add_argument("--param_m", type=float, default=0.7)
     parser.add_argument("--lambd", type=float, default=0.05)
+
+    # SD-LoRA
+    parser.add_argument("--lora_rank", type=int, default=10, help="Rank for LoRA adaptation")
+    parser.add_argument("--lora_alpha", type=float, default=1.0, help="Alpha parameter for LoRA")
+    parser.add_argument("--adaptation_lr", type=float, default=1e-4, help="Learning rate for LoRA parameters")
+    parser.add_argument("--ortho_reg_weight", type=float, default=0.1, help="Weight for orthogonal regularization")
 
     # args and init
     args = parser.parse_args()
