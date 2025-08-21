@@ -24,39 +24,9 @@ class ThorEnv(Controller):
                  player_screen_height=constants.DETECTION_SCREEN_HEIGHT,
                  player_screen_width=constants.DETECTION_SCREEN_WIDTH,
                  quality='MediumCloseFitShadows',
-                 build_path=constants.BUILD_PATH,
-                 headless=None):
+                 build_path=constants.BUILD_PATH):
 
-        # Try headless mode if x_display fails or headless is explicitly requested
-        if headless is True:
-            super().__init__(quality=quality, headless=True, renderInstanceSegmentation=False)
-        else:
-            try:
-                super().__init__(quality=quality)
-            except Exception as e:
-                if "No valid X display found" in str(e) or "X11" in str(e):
-                    print("X11 display not available, falling back to headless mode...")
-                    try:
-                        super().__init__(quality=quality, headless=True, renderInstanceSegmentation=False)
-                    except Exception as e2:
-                        if "vulkaninfo" in str(e2):
-                            print("Vulkan not available, trying with CPU rendering...")
-                            try:
-                                super().__init__(quality=quality, headless=True, renderInstanceSegmentation=False, platform="CloudRendering")
-                            except Exception as e3:
-                                print("CloudRendering failed, trying OSMesa...")
-                                super().__init__(quality=quality, headless=True, renderInstanceSegmentation=False, platform="OSMesa")
-                        else:
-                            raise e2
-                elif "vulkaninfo" in str(e):
-                    print("Vulkan not available, trying with CPU rendering...")
-                    try:
-                        super().__init__(quality=quality, headless=True, renderInstanceSegmentation=False, platform="CloudRendering")
-                    except Exception as e2:
-                        print("CloudRendering failed, trying OSMesa...")
-                        super().__init__(quality=quality, headless=True, renderInstanceSegmentation=False, platform="OSMesa")
-                else:
-                    raise e
+        super().__init__(quality=quality)
         self.local_executable_path = build_path
         self.start(x_display=x_display,
                    player_screen_height=player_screen_height,
