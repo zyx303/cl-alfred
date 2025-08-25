@@ -13,6 +13,13 @@ import torch
 
 
 if __name__ == '__main__':
+    import debugpy
+    import os 
+    print(os.getenv('debug'))
+    if os.getenv('debug', '0') == '1':
+        debugpy.listen(("localhost", 5678))
+        debugpy.wait_for_client()
+
     # multiprocessing settings
     mp.set_start_method('spawn')
     manager = mp.Manager()
@@ -31,7 +38,7 @@ if __name__ == '__main__':
     parser.add_argument('--shuffle', dest='shuffle', action='store_true')
     parser.add_argument('--gpu', dest='gpu', action='store_true')
     parser.add_argument('--num_threads', type=int, default=1)
-    parser.add_argument('--x_display', type=str, default='1')
+    parser.add_argument('--x_display', type=str, default='0')
 
     # eval params
     parser.add_argument('--max_steps', type=int, default=1000, help='max steps before episode termination')
@@ -47,7 +54,7 @@ if __name__ == '__main__':
     parser.add_argument('--fast_epoch', dest='fast_epoch', action='store_true')
 
     # cl setup
-    parser.add_argument('--incremental_setup', type=str, choices=['behavior_il', 'environment_il', 'environment_il_nosampling'])
+    parser.add_argument('--incremental_setup', type=str, choices=['behavior_il','behavior_il_test', 'environment_il', 'environment_il_nosampling'])
     parser.add_argument('--stream_seed', type=int)
     parser.add_argument('--incremental_type', type=str)
 

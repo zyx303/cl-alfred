@@ -6,6 +6,7 @@ from datetime import datetime
 from eval import Eval
 from env.thor_env import ThorEnv
 
+import sys
 import torch
 import constants
 import torch.nn.functional as F
@@ -303,6 +304,7 @@ class EvalTask(Eval):
                                     results['all']['goal_condition_success']['goal_condition_success_rate']))
         print("PLW GC: %.5f" % (results['all']['path_length_weighted_goal_condition_success_rate']))
         print("-------------")
+        sys.stdout.flush()
 
         # task type specific results
         task_types = ['pick_and_place_simple', 'pick_clean_then_place_in_recep', 'pick_heat_then_place_in_recep',

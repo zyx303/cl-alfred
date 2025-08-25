@@ -1,5 +1,6 @@
 export ALFRED_ROOT=~/work/cl-alfred
-export CUDA_VISIBLE_DEVICES=6,7
+export CUDA_VISIBLE_DEVICES=0
+export DISPLAY=:0
 
 python models/eval/eval_seq2seq.py                                                    \
     --model_path exp/behavior_il/cama/s1/net_epoch_000002251_look_at_obj_in_light.pth \
@@ -7,6 +8,6 @@ python models/eval/eval_seq2seq.py                                              
     --incremental_setup behavior_il                                                   \
     --incremental_type look_at_obj_in_light                                           \
     --stream_seed 1                                                                   \
-    --num_threads 2                                                                   \
-    --x_display 1                                                                     \
+    --num_threads 6                                                                    \
+    --x_display 0                                                                       \
     --gpu

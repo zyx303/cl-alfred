@@ -1,7 +1,7 @@
 import os
+import re
 import torch
 import numpy as np
-import nn.vnn as vnn
 import collections
 from torch import nn
 from torch.nn import functional as F
@@ -9,763 +9,259 @@ from torch.nn.utils.rnn import pad_sequence, pack_padded_sequence, pad_packed_se
 from model.seq2seq_im_mask import Module as Base
 from models.utils.metric import compute_f1, compute_exact
 from gen.utils.image_util import decompress_mask
-# from utils.download_feat import download_hf_patterns
-
+from models.nn import vnn
+import models.nn.vnn as vnn
+import math
 import constants
 classes = [0] + constants.OBJECTS + ['AppleSliced', 'ShowerCurtain', 'TomatoSliced', 'LettuceSliced', 'Lamp', 'ShowerHead', 'EggCracked', 'BreadSliced', 'PotatoSliced', 'Faucet']
 
-
-class LoRALayer(nn.Module):
-    """
-    LoRA (Low-Rank Adaptation) layer implementation
-    """
-    def __init__(self, in_features, out_features, rank=4, scale=1.0, dropout=0.0):
-        super().__init__()
-        self.rank = rank
-        self.scale = scale
-        self.dropout = nn.Dropout(dropout) if dropout > 0 else None
-        
-        # LoRA layers
-        self.lora_A = nn.Linear(in_features, rank, bias=False)
-        self.lora_B = nn.Linear(rank, out_features, bias=False)
-        
-        # Initialize LoRA weights
-        nn.init.kaiming_uniform_(self.lora_A.weight, a=np.sqrt(5))
-        nn.init.zeros_(self.lora_B.weight)
-        
-    def forward(self, x):
-        result = self.lora_A(x)
-        if self.dropout is not None:
-            result = self.dropout(result)
-        result = self.lora_B(result)
-        return result * self.scale
-
-
 class LoRALinear(nn.Module):
     """
-    Linear layer with LoRA adaptation
+    Linear layer with multi-task LoRA adaptation
     """
-    def __init__(self, original_layer, rank=4, scale=1.0, dropout=0.0):
+    def __init__(self, original_layer, rank=4, current_task=0, path=None):
         super().__init__()
         self.original_layer = original_layer
-        self.lora = LoRALayer(
-            original_layer.in_features, 
-            original_layer.out_features, 
-            rank=rank, 
-            scale=scale, 
-            dropout=dropout
-        )
-        
+        self.in_features = original_layer.in_features
+        self.out_features = original_layer.out_features
+        self.rank = rank
+        self.lora_A_dict = nn.ModuleDict()
+        self.lora_B_dict = nn.ModuleDict()
+        self.task_id = current_task
+        self.directions = nn.ParameterDict()
+        self.scales = nn.ParameterDict()
+        self._init_task_lora(current_task)
+
+    # 不再从外部路径加载，全部依赖于 state_dict 恢复
+
         # Freeze original parameters
         for param in self.original_layer.parameters():
             param.requires_grad = False
     
+    def _load_previous_tasks(self, path):
+        """占位：保留接口但不做任何加载（统一使用 state_dict）"""
+        return
+    
+    def _init_task_lora(self, task_id):
+        """初始化特定任务的LoRA参数"""
+        task_name = f'task_{task_id}'
+        
+        # 创建新的LoRA A和B层
+        lora_A = nn.Linear(self.in_features, self.rank, bias=False)
+        lora_B = nn.Linear(self.rank, self.out_features, bias=False)
+        
+        # 初始化权重
+        nn.init.kaiming_uniform_(lora_A.weight, a=math.sqrt(5))
+        nn.init.zeros_(lora_B.weight)
+
+        # 确保与原始层处于同一设备与dtype
+        dev = self.original_layer.weight.device
+        dtype = self.original_layer.weight.dtype
+        lora_A = lora_A.to(device=dev, dtype=dtype)
+        lora_B = lora_B.to(device=dev, dtype=dtype)
+        
+        # 存储到字典中
+        self.lora_A_dict[task_name] = lora_A
+        self.lora_B_dict[task_name] = lora_B
+        
+        # 添加scale参数
+        self.scales[task_name] = nn.Parameter(torch.ones(1, device=dev, dtype=dtype))
+        self.scales[task_name].requires_grad = True
+
     def forward(self, x):
-        return self.original_layer(x) + self.lora(x)
+        # 保留线性层输入用于LoRA残差
+        input_x = x
+        out = self.original_layer(x)
 
+        # 叠加已完成任务的方向增益：input_x @ direction^T -> [B, out_features]
+        if self.task_id > 0:
+            for i in range(self.task_id):
+                tname = f'task_{i}'
+                if tname in self.directions and tname in self.scales:
+                    # directions[tname]: [out_features, in_features]
+                    # input_x: [B, in_features]
+                    out = out + self.scales[tname] * (input_x @ self.directions[tname].transpose(0, 1))
 
-class LoRASelfAttn(vnn.SelfAttn):
-    """
-    Self-attention with LoRA adaptation
-    """
-    def __init__(self, dhid, lora_rank=4, lora_scale=1.0, lora_dropout=0.0):
-        super().__init__(dhid)
-        
-        # Add LoRA to the scorer linear layer
-        self.scorer_lora = LoRALayer(dhid, 1, rank=lora_rank, scale=lora_scale, dropout=lora_dropout)
-        
-        # Freeze original scorer parameters
-        for param in self.scorer.parameters():
-            param.requires_grad = False
+        # 应用当前任务的LoRA
+        current_task_name = f'task_{self.task_id}'
+        if current_task_name in self.lora_A_dict:
+            lora_A = self.lora_A_dict[current_task_name]
+            lora_B = self.lora_B_dict[current_task_name]
+            lora_output = lora_B(lora_A(input_x))
+            out = out + self.scales[current_task_name] * lora_output
+
+        return out
     
-    def forward(self, inp):
-        # Original scores + LoRA adaptation
-        scores = F.softmax(self.scorer(inp) + self.scorer_lora(inp), dim=1)
-        cont = scores.transpose(1, 2).bmm(inp).squeeze(1)
-        return cont
+    def add_task(self, new_task_id):
+        """添加新任务并初始化其LoRA参数"""
+        if new_task_id == self.task_id + 1:
+            # 初始化新任务的LoRA参数
+            self._init_task_lora(new_task_id)
+            self.task_id = new_task_id
+
+    def complete_task(self):
+        """完成当前任务：计算 direction，写入本模块参数（供 state_dict 保存）"""
+        current_task_name = f'task_{self.task_id}'
+        dev = self.original_layer.weight.device
+        # 计算权重分解（W_delta = B @ A）并按行归一化得到方向矩阵 [out, in]
+        w_delta = self.lora_B_dict[current_task_name].weight @ self.lora_A_dict[current_task_name].weight
+        dir = w_delta / (torch.norm(w_delta, dim=1, keepdim=True) + 1e-12)
+        # 将direction添加到模型中（冻结方向，仅训练scale）
+        self.directions[current_task_name] = nn.Parameter(dir.to(dev), requires_grad=False)
+        self.scales[current_task_name].requires_grad = True
 
 
-class LoRAScaledDotAttn(vnn.ScaledDotAttn):
+
+
+def replace_linear_with_lora(module, rank=4, current_task=0, target_modules=None):
     """
-    Scaled dot-product attention with LoRA adaptation for q, v projections
+    Recursively replace Linear layers with LoRA versions
     """
-    def __init__(self, dim_key_in=1024, dim_key_out=128, dim_query_in=1024, dim_query_out=128, 
-                 lora_rank=4, lora_scale=1.0, lora_dropout=0.0):
-        super().__init__(dim_key_in, dim_key_out, dim_query_in, dim_query_out)
-        
-        # Add LoRA to key and query projections (equivalent to k,v in transformer)
-        self.fc_key_lora = LoRALayer(dim_key_in, dim_key_out, rank=lora_rank, scale=lora_scale, dropout=lora_dropout)
-        self.fc_query_lora = LoRALayer(dim_query_in, dim_query_out, rank=lora_rank, scale=lora_scale, dropout=lora_dropout)
-        
-        # Freeze original parameters
-        for param in self.fc_key.parameters():
-            param.requires_grad = False
-        for param in self.fc_query.parameters():
-            param.requires_grad = False
+    if target_modules is None:
+        target_modules = ['Linear']
     
-    def forward(self, value, h):
-        # Apply original + LoRA transformations
-        key = F.relu(self.fc_key(value) + self.fc_key_lora(value))
-        query = F.relu(self.fc_query(h) + self.fc_query_lora(h)).unsqueeze(-1)
-
-        scale_1 = np.sqrt(key.shape[-1])
-        scaled_dot_product = torch.bmm(key, query) / scale_1
-        softmax = self.softmax(scaled_dot_product)
-        element_wise_product = value * softmax
-        weighted_lang_t_instr = torch.sum(element_wise_product, dim=1)
-
-        return weighted_lang_t_instr, softmax.squeeze(-1)
+    for name, child in module.named_children():
+        if isinstance(child, nn.Linear):
+            # Replace with LoRA version
+            lora_linear = LoRALinear(child, rank=rank, current_task=current_task, path=None)
+            setattr(module, name, lora_linear)
+        else:
+            # Recursively apply to child modules
+            replace_linear_with_lora(child, rank, current_task, target_modules)
 
 
-class LoRAABP(vnn.ABP):
+def replace_attention_with_lora(module, rank=4, current_task=0):
     """
-    ABP decoder with LoRA adaptation
+    Replace attention q, v projections with LoRA versions
     """
-    def __init__(self, emb, dframe, dhid, pframe=300,
-                 attn_dropout=0., hstate_dropout=0., actor_dropout=0., input_dropout=0.,
-                 teacher_forcing=False, lora_rank=4, lora_scale=1.0, lora_dropout=0.0):
-        super().__init__(emb, dframe, dhid, pframe, attn_dropout, hstate_dropout, 
-                        actor_dropout, input_dropout, teacher_forcing)
+    for name, child in module.named_children():
+        if hasattr(child, 'fc_key') and hasattr(child, 'fc_query'):
+            # This looks like a scaled dot attention module - replace q,v (key,query)
+            if isinstance(child.fc_key, nn.Linear):
+                child.fc_key = LoRALinear(child.fc_key, rank=rank, current_task=current_task)
+            if isinstance(child.fc_query, nn.Linear):
+                child.fc_query = LoRALinear(child.fc_query, rank=rank, current_task=current_task)
         
-        # Replace scaled dot attention with LoRA version
-        self.scale_dot_attn = LoRAScaledDotAttn(dhid, 128, dhid, 128, 
-                                               lora_rank=lora_rank, 
-                                               lora_scale=lora_scale, 
-                                               lora_dropout=lora_dropout)
+        elif hasattr(child, 'scorer') and isinstance(child.scorer, nn.Linear):
+            # This looks like a self attention module
+            child.scorer = LoRALinear(child.scorer, rank=rank, current_task=current_task)
         
-        # Add LoRA to critical linear layers
-        self.h_tm1_fc_goal = LoRALinear(self.h_tm1_fc_goal, rank=lora_rank, scale=lora_scale, dropout=lora_dropout)
-        self.h_tm1_fc_instr = LoRALinear(self.h_tm1_fc_instr, rank=lora_rank, scale=lora_scale, dropout=lora_dropout)
-        
-        # Add LoRA to actor network layers
-        actor_layers = list(self.actor.children())
-        if len(actor_layers) >= 3 and isinstance(actor_layers[0], nn.Linear):
-            self.actor[0] = LoRALinear(actor_layers[0], rank=lora_rank, scale=lora_scale, dropout=lora_dropout)
-        if len(actor_layers) >= 3 and isinstance(actor_layers[2], nn.Linear):
-            self.actor[2] = LoRALinear(actor_layers[2], rank=lora_rank, scale=lora_scale, dropout=lora_dropout)
-        
-        # Add LoRA to mask decoder layers  
-        mask_layers = list(self.mask_dec.children())
-        if len(mask_layers) >= 3 and isinstance(mask_layers[0], nn.Linear):
-            self.mask_dec[0] = LoRALinear(mask_layers[0], rank=lora_rank, scale=lora_scale, dropout=lora_dropout)
-        if len(mask_layers) >= 3 and isinstance(mask_layers[2], nn.Linear):
-            self.mask_dec[2] = LoRALinear(mask_layers[2], rank=lora_rank, scale=lora_scale, dropout=lora_dropout)
-        
-        # Add LoRA to progress prediction layers
-        self.progress_goal = LoRALinear(self.progress_goal, rank=lora_rank, scale=lora_scale, dropout=lora_dropout)
-        self.progress_instr = LoRALinear(self.progress_instr, rank=lora_rank, scale=lora_scale, dropout=lora_dropout)
-
+        else:
+            # Recursively apply to child modules
+            replace_attention_with_lora(child, rank, current_task)
 
 
 class Module(Base):
-
+    """
+    Seq2Seq agent with multi-task LoRA adaptation
+    """
+    
     def __init__(self, args, vocab):
         '''
-        Seq2Seq agent with LoRA adaptation
+        Initialize Seq2Seq agent with LoRA adaptation
         '''
         super().__init__(args, vocab)
-
         # LoRA configuration
-        self.lora_rank = getattr(args, 'lora_rank', 4)
-        self.lora_scale = getattr(args, 'lora_scale', 1.0)
-        self.lora_dropout = getattr(args, 'lora_dropout', 0.0)
+        self.lora_rank = getattr(args, 'lora_rank', 10)
+        self.current_task = getattr(args, 'current_task', 1)
+        self.current_task = 0
+        # Apply LoRA to all linear layers and attention modules
+        self._apply_lora_to_model()
+        # Keep track of LoRA modules for task switching
+        self.lora_modules = []
+        # self._collect_lora_modules()
+    
+    def _apply_lora_to_model(self):
+        """Apply LoRA to all linear layers and attention q,v projections"""
+        # Replace linear layers with LoRA versions
+        replace_linear_with_lora(self, rank=self.lora_rank, current_task=self.current_task)
+        # Replace attention q,v projections with LoRA versions
+        # replace_attention_with_lora(self, rank=self.lora_rank, current_task=self.current_task)
+    
+    # def _collect_lora_modules(self):
+    #     """Collect all LoRA modules for easy task switching"""
+    #     self.lora_modules = []
+    #     for module in self.modules():
+    #         if isinstance(module, LoRALinear):
+    #             self.lora_modules.append(module)
+    
+    def add_task(self, task_id):
+        """Add a new task to all LoRA modules"""
+        self.current_task = max(self.current_task, task_id + 1)
+        # 为所有LoRA模块添加新任务
+        for module in self.modules():
+            if isinstance(module, LoRALinear):
+                module.add_task(task_id)
+    
+        print(f"Added task {task_id} with fresh LoRA parameters for all modules")
+    
+    def complete_task(self, task_id):
+        """Complete a task: compute directions and store inside modules (state_dict covers all)."""
+        print(f"Completing task {task_id} and performing weight decomposition...")
+        for _, module in self.named_modules():
+            if isinstance(module, LoRALinear):
+                module.complete_task()
+        print(f"Task {task_id} decomposition completed")
 
-        # Replace encoder and self-attention with LoRA versions
-        self.enc_goal = nn.LSTM(args.demb, args.dhid, bidirectional=True, batch_first=True)
-        self.enc_instr = nn.LSTM(args.demb, args.dhid, bidirectional=True, batch_first=True)
-        self.enc_att_goal = LoRASelfAttn(args.dhid*2, 
-                                        lora_rank=self.lora_rank, 
-                                        lora_scale=self.lora_scale, 
-                                        lora_dropout=self.lora_dropout)
-        self.enc_att_instr = LoRASelfAttn(args.dhid*2, 
-                                         lora_rank=self.lora_rank, 
-                                         lora_scale=self.lora_scale, 
-                                         lora_dropout=self.lora_dropout)
-
-        # subgoal monitoring
-        self.subgoal_monitoring = (self.args.pm_aux_loss_wt > 0 or self.args.subgoal_aux_loss_wt > 0)
-
-        # Replace decoder with LoRA version
-        self.dec = LoRAABP(self.emb_action_low, args.dframe, 2*args.dhid,
-                          pframe=args.pframe,
-                          attn_dropout=args.attn_dropout,
-                          hstate_dropout=args.hstate_dropout,
-                          actor_dropout=args.actor_dropout,
-                          input_dropout=args.input_dropout,
-                          teacher_forcing=args.dec_teacher_forcing,
-                          lora_rank=self.lora_rank,
-                          lora_scale=self.lora_scale,
-                          lora_dropout=self.lora_dropout)
-
-        # dropouts
-        self.vis_dropout = nn.Dropout(args.vis_dropout)
-        self.lang_dropout = nn.Dropout(args.lang_dropout, inplace=True)
-        self.input_dropout = nn.Dropout(args.input_dropout)
-
-        # internal states
-        self.state_t = None
-        self.e_t = None
-        self.test_mode = False
-
-        # bce reconstruction loss
-        # self.bce_with_logits = torch.nn.BCEWithLogitsLoss(reduction='none')
-        self.mse_loss = torch.nn.MSELoss(reduction='none')
-        self.ce_loss = torch.nn.CrossEntropyLoss(reduction='none')
-
-        # paths
-        self.root_path = os.getcwd()
-        self.feat_pt = 'feat_conv_panoramic.pt'
-
-        # params
-        self.max_subgoals = 25
-
-        # reset model
-        self.reset()
-
-        self.panoramic = args.panoramic
-        self.orientation = args.orientation
-
-    def enable_lora_training(self):
+    @classmethod
+    def load(cls, fsave):
         """
-        Enable LoRA parameters for training while keeping original parameters frozen
+        Custom loader that prepares LoRA task placeholders before loading state_dict
+        so checkpoints containing task_1/task_2 and directions/scales can be restored.
         """
-        for name, param in self.named_parameters():
-            if 'lora' in name.lower():
-                param.requires_grad = True
-            else:
-                param.requires_grad = False
-                
-    def disable_lora_training(self):
-        """
-        Disable LoRA parameters and enable all parameters for training
-        """
-        for param in self.parameters():
-            param.requires_grad = True
-            
-    def get_lora_parameters(self):
-        """
-        Get only LoRA parameters for optimization
-        """
-        lora_params = []
-        for name, param in self.named_parameters():
-            if 'lora' in name.lower() and param.requires_grad:
-                lora_params.append(param)
-        return lora_params
-        
-    def save_lora_weights(self, path):
-        """
-        Save only LoRA weights
-        """
-        lora_state_dict = {}
-        for name, param in self.named_parameters():
-            if 'lora' in name.lower():
-                lora_state_dict[name] = param.data
-        torch.save(lora_state_dict, path)
-        
-    def load_lora_weights(self, path):
-        """
-        Load LoRA weights
-        """
-        lora_state_dict = torch.load(path)
-        current_state_dict = self.state_dict()
-        current_state_dict.update(lora_state_dict)
-        self.load_state_dict(current_state_dict)
+        save = torch.load(fsave, map_location='cpu')
+        # instantiate model first
+        model = cls(save['args'], save['vocab'])
 
+        # extract model state dict (support both keys)
+        state = save.get('model', None)
+        if state is None:
+            state = save.get('model_state_dict', {})
 
-    def featurize(self, batch, load_mask=True, load_frames=True):
-        '''
-        tensorize and pad batch input
-        '''
-        device = torch.device('cuda') if self.args.gpu else torch.device('cpu')
-        feat = collections.defaultdict(list)
-
-        for ex, swapColor in batch:
-            ###########
-            # auxillary
-            ###########
-
-            if not self.test_mode:
-                # progress monitor supervision
-                if self.args.pm_aux_loss_wt > 0:
-                    num_actions = len([a for sg in ex['num']['action_low'] for a in sg])
-                    subgoal_progress = [(i+1)/float(num_actions) for i in range(num_actions)]
-                    feat['subgoal_progress'].append(subgoal_progress)
-
-            #########
-            # inputs
-            #########
-
-            # serialize segments
-            self.serialize_lang_action(ex)
-
-            # goal and instr language
-            lang_goal, lang_instr = ex['num']['lang_instr'], ex['num']['lang_instr']
-
-            # zero inputs if specified
-            lang_goal = self.zero_input(lang_goal) if self.args.zero_goal else lang_goal
-            lang_instr = self.zero_input(lang_instr) if self.args.zero_instr else lang_instr
-
-            # append goal + instr
-            feat['lang_goal'].append(lang_goal)
-            feat['lang_instr'].append(lang_instr)
-
-            #########
-            # outputs
-            #########
-
-            if not self.test_mode:
-                # low-level action
-                feat['action_low'].append([a['action'] for a in ex['num']['action_low']])
-
-                # low-level action mask
-                if load_mask:
-                    indices = []
-                    for a in ex['plan']['low_actions']:
-                        if a['api_action']['action'] in ['MoveAhead', 'LookUp', 'LookDown', 'RotateRight', 'RotateLeft']:
-                            continue
-                        if a['api_action']['action'] == 'PutObject':
-                            label = a['api_action']['receptacleObjectId'].split('|')
-                        else:
-                            label = a['api_action']['objectId'].split('|')
-                        indices.append(classes.index(label[4].split('_')[0] if len(label) >= 5 else label[0]))
-                    feat['action_low_mask_label'].append(indices)
-                    feat['action_low_mask_label_unflattened'].append(indices)
-
-                # low-level valid interact
-                feat['action_low_valid_interact'].append([a['valid_interact'] for a in ex['num']['action_low']])
-
-            # 如果root不存在，下载
-            # if not os.path.exists(self.get_task_root(ex)):
-            #     download_hf_patterns(
-            #         repo_id="byeonghwikim/abp_dataset",
-            #         local_dir=self.args.data,
-            #         folder_pattern=f"{ex['split']}/{ex['task_type']}*/**",
-            #         repo_type="dataset"
-            #     )
-
-            # load Resnet features from disk
-            if load_frames and not self.test_mode:
-                root = self.get_task_root(ex)
-                # if swapColor in [0]:
-                im = torch.load(os.path.join(root, self.feat_pt))
-                # elif swapColor in [1, 2]:
-                #     im = torch.load(os.path.join(root, 'feat_conv_colorSwap{}_panoramic.pt'.format(swapColor)))
-                # elif swapColor in [3, 4, 5, 6]:
-                #     im = torch.load(os.path.join(root, 'feat_conv_onlyAutoAug{}_panoramic.pt'.format(swapColor - 2)))
-                
-                feat['frames'].append(im[2][:len(feat['action_low'][-1])])
-
-                feat['frames_left'].append(im[0][:len(feat['action_low'][-1])])
-                feat['frames_up'].append(im[1][:len(feat['action_low'][-1])])
-                feat['frames_down'].append(im[3][:len(feat['action_low'][-1])])
-                feat['frames_right'].append(im[4][:len(feat['action_low'][-1])])
-
-        # tensorization and padding
-        for k, v in feat.items():
-            if k in {'lang_goal', 'lang_instr'}:
-                # language embedding and padding
-                seqs = [torch.tensor(vv, device=device) for vv in v]
-                pad_seq = pad_sequence(seqs, batch_first=True, padding_value=self.pad)
-                seq_lengths = np.array(list(map(len, v)))
-                embed_seq = self.emb_word(pad_seq)
-                packed_input = pack_padded_sequence(embed_seq, seq_lengths, batch_first=True, enforce_sorted=False)
-                feat[k] = packed_input
-            elif k in {'action_low_mask'}:
-                # mask padding
-                seqs = [torch.tensor(vv, device=device, dtype=torch.float) for vv in v]
-                feat[k] = seqs
-            elif k in {'action_low_mask_label'}:
-                # label
-                seqs = torch.tensor([vvv for vv in v for vvv in vv], device=device, dtype=torch.long)
-                feat[k] = seqs
-            elif k in {'action_low_mask_label_unflattened'}:
-                # label
-                seqs = [torch.tensor(vv, device=device, dtype=torch.long) for vv in v]
-                feat[k] = seqs
-            elif k in {'subgoal_progress', 'subgoals_completed'}:
-                # auxillary padding
-                seqs = [torch.tensor(vv, device=device, dtype=torch.float) for vv in v]
-                pad_seq = pad_sequence(seqs, batch_first=True, padding_value=self.pad)
-                feat[k] = pad_seq
-            else:
-                # default: tensorize and pad sequence
-                seqs = [torch.tensor(vv, device=device, dtype=torch.float if ('frames' in k or 'orientation' in k) else torch.long) for vv in v]
-                pad_seq = pad_sequence(seqs, batch_first=True, padding_value=self.pad)
-                feat[k] = pad_seq
-
-        return feat
-
-
-    def serialize_lang_action(self, feat):
-        '''
-        append segmented instr language and low-level actions into single sequences
-        '''
-        is_serialized = not isinstance(feat['num']['lang_instr'][0], list)
-        if not is_serialized:
-            feat['num']['lang_instr'] = [word for desc in feat['num']['lang_instr'] for word in desc]
-            if not self.test_mode:
-                feat['num']['action_low'] = [a for a_group in feat['num']['action_low'] for a in a_group]
-
-
-    def decompress_mask(self, compressed_mask):
-        '''
-        decompress mask from json files
-        '''
-        mask = np.array(decompress_mask(compressed_mask))
-        mask = np.expand_dims(mask, axis=0)
-        return mask
-
-
-    def forward(self, feat, max_decode=300):
-        cont_lang_goal, enc_lang_goal = self.encode_lang(feat)
-        cont_lang_instr, enc_lang_instr = self.encode_lang_instr(feat)
-        state_0_goal = cont_lang_goal, torch.zeros_like(cont_lang_goal)
-        state_0_instr = cont_lang_instr, torch.zeros_like(cont_lang_instr)
-
-        frames = self.vis_dropout(feat['frames'])
-        if self.panoramic:
-            frames_left = self.vis_dropout(feat['frames_left'])
-            frames_up = self.vis_dropout(feat['frames_up'])
-            frames_down = self.vis_dropout(feat['frames_down'])
-            frames_right = self.vis_dropout(feat['frames_right'])
-            res = self.dec(enc_lang_goal, enc_lang_instr, frames, frames_left, frames_up, frames_down, frames_right, max_decode=max_decode, gold=feat['action_low'], state_0_goal=state_0_goal, state_0_instr=state_0_instr)
+        # discover all task ids present in checkpoint
+        task_ids = set()
+        task_pattern = re.compile(r"\.task_(\d+)\.")
+        for key in state.keys():
+            if any(s in key for s in [
+                'lora_A_dict.task_', 'lora_B_dict.task_', 'scales.task_', 'directions.task_']):
+                m = task_pattern.search(key)
+                if m:
+                    task_ids.add(int(m.group(1)))
+        if not task_ids:
+            # no extra tasks found; proceed with vanilla load
+            model.load_state_dict(state, strict=False)
         else:
-            res = self.dec(enc_lang_goal, enc_lang_instr, frames, max_decode=max_decode, gold=feat['action_low'], state_0_goal=state_0_goal, state_0_instr=state_0_instr)
-        feat.update(res)
-        return feat
-
-
-    def encode_lang(self, feat):
-        '''
-        encode goal+instr language
-        '''
-        emb_lang = feat['lang_goal']
-
-        self.lang_dropout(emb_lang.data)
-
-        enc_lang, _ = self.enc_goal(emb_lang)
-        enc_lang, _ = pad_packed_sequence(enc_lang, batch_first=True)
-
-        self.lang_dropout(enc_lang)
-
-        cont_lang = self.enc_att_goal(enc_lang)
-
-        return cont_lang, enc_lang
-
-    def encode_lang_instr(self, feat):
-        '''
-        encode goal+instr language
-        '''
-        emb_lang = feat['lang_instr']
-
-        self.lang_dropout(emb_lang.data)
-
-        enc_lang, _ = self.enc_instr(emb_lang)
-        enc_lang, _ = pad_packed_sequence(enc_lang, batch_first=True)
-
-        self.lang_dropout(enc_lang)
-
-        cont_lang = self.enc_att_instr(enc_lang)
-
-        return cont_lang, enc_lang
-
-
-    def reset(self):
-        '''
-        reset internal states (used for real-time execution during eval)
-        '''
-        self.r_state = {
-            'state_t_goal': None,
-            'state_t_instr': None,
-            'e_t': None,
-            'cont_lang_goal': None,
-            'enc_lang_goal': None,
-            'cont_lang_instr': None,
-            'enc_lang_instr': None,
-        }
-
-
-    def step(self, feat, prev_action=None):
-        '''
-        forward the model for a single time-step (used for real-time execution during eval)
-        '''
-
-        # encode language features (goal)
-        if self.r_state['cont_lang_goal'] is None and self.r_state['enc_lang_goal'] is None:
-            self.r_state['cont_lang_goal'], self.r_state['enc_lang_goal'] = self.encode_lang(feat)
-
-        # encode language features (instr)
-        if self.r_state['cont_lang_instr'] is None and self.r_state['enc_lang_instr'] is None:
-            self.r_state['cont_lang_instr'], self.r_state['enc_lang_instr'] = self.encode_lang_instr(feat)
-
-        # initialize embedding and hidden states (goal)
-        if self.r_state['state_t_goal'] is None:
-            self.r_state['state_t_goal'] = self.r_state['cont_lang_goal'], torch.zeros_like(self.r_state['cont_lang_goal'])
-
-        # initialize embedding and hidden states (instr)
-        if self.r_state['e_t'] is None and self.r_state['state_t_instr'] is None:
-            self.r_state['e_t'] = self.dec.go.repeat(self.r_state['enc_lang_instr'].size(0), 1)
-            self.r_state['state_t_instr'] = self.r_state['cont_lang_instr'], torch.zeros_like(self.r_state['cont_lang_instr'])
-
-        # previous action embedding
-        e_t = self.embed_action(prev_action) if prev_action is not None else self.r_state['e_t']
-
-        # decode and save embedding and hidden states
-        if self.panoramic:
-            out_action_low, out_action_low_mask, state_t_goal, state_t_instr, \
-            lang_attn_t_goal, lang_attn_t_instr, *_ = \
-                self.dec.step(
-                    self.r_state['enc_lang_goal'],
-                    self.r_state['enc_lang_instr'],
-                    feat['frames'][:, 0],
-                    feat['frames_left'][:, 0],
-                    feat['frames_up'][:, 0],
-                    feat['frames_down'][:, 0],
-                    feat['frames_right'][:, 0],
-                    e_t=e_t,
-                    state_tm1_goal=self.r_state['state_t_goal'],
-                    state_tm1_instr=self.r_state['state_t_instr'],
-                )
-        else:
-            out_action_low, out_action_low_mask, state_t_goal, state_t_instr, \
-            lang_attn_t_goal, lang_attn_t_instr, *_ = \
-                self.dec.step(
-                    self.r_state['enc_lang_goal'],
-                    self.r_state['enc_lang_instr'],
-                    feat['frames'][:, 0],
-                    e_t=e_t,
-                    state_tm1_goal=self.r_state['state_t_goal'],
-                    state_tm1_instr=self.r_state['state_t_instr'],
-                )
-
-        # save states
-        self.r_state['state_t_goal'] = state_t_goal
-        self.r_state['state_t_instr'] = state_t_instr
-        self.r_state['e_t'] = self.dec.emb(out_action_low.max(1)[1])
-
-        # output formatting
-        feat['out_action_low'] = out_action_low.unsqueeze(0)
-        feat['out_action_low_mask'] = out_action_low_mask.unsqueeze(0)
-
-        return feat
-
-
-    def extract_preds(self, out, batch, feat, clean_special_tokens=True):
-        '''
-        output processing
-        '''
-        pred = {}
-        for (ex, _), alow, alow_mask in zip(batch, feat['out_action_low'].max(2)[1].tolist(), feat['out_action_low_mask']):
-            # remove padding tokens
-            if self.pad in alow:
-                pad_start_idx = alow.index(self.pad)
-                alow = alow[:pad_start_idx]
-                alow_mask = alow_mask[:pad_start_idx]
-
-            if clean_special_tokens:
-                # remove <<stop>> tokens
-                if self.stop_token in alow:
-                    stop_start_idx = alow.index(self.stop_token)
-                    alow = alow[:stop_start_idx]
-                    alow_mask = alow_mask[:stop_start_idx]
-
-            # index to API actions
-            words = self.vocab['action_low'].index2word(alow)
-
-            p_mask = [alow_mask[t].detach().cpu().numpy() for t in range(alow_mask.shape[0])]
-
-            pred[self.get_task_and_ann_id(ex)] = {
-                'action_low': ' '.join(words),
-                'action_low_mask': p_mask,
-            }
-
-        return pred
-
-
-    def embed_action(self, action):
-        '''
-        embed low-level action
-        '''
-        device = torch.device('cuda') if self.args.gpu else torch.device('cpu')
-        action_num = torch.tensor(self.vocab['action_low'].word2index(action), device=device)
-        action_emb = self.dec.emb(action_num).unsqueeze(0)
-        return action_emb
-
-
-    def compute_loss(self, out, batch, feat):
-        '''
-        loss function for Seq2Seq agent
-        '''
-        losses = dict()
-
-        # GT and predictions
-        p_alow = out['out_action_low'].view(-1, len(self.vocab['action_low']))
-        l_alow = feat['action_low'].view(-1)
-        p_alow_mask = out['out_action_low_mask']
-        valid = feat['action_low_valid_interact']
-
-        # action loss
-        pad_valid = (l_alow != self.pad)
-        alow_loss = self.ce_loss(p_alow, l_alow)
-        alow_loss *= pad_valid.float()
-        alow_loss = alow_loss.mean()
-        losses['action_low'] = alow_loss * self.args.action_loss_wt
-
-        # mask loss
-        valid_idxs = valid.view(-1).nonzero().view(-1)
-        flat_p_alow_mask = p_alow_mask.view(p_alow_mask.shape[0] * p_alow_mask.shape[1], p_alow_mask.shape[2])[valid_idxs]
-        losses['action_low_mask'] = self.ce_loss(flat_p_alow_mask, feat['action_low_mask_label']).mean() * self.args.mask_loss_wt
-
-        # progress monitoring loss
-        if self.args.pm_aux_loss_wt > 0:
-            p_progress_goal = feat['out_progress_goal'].squeeze(2)
-            p_progress_instr = feat['out_progress_instr'].squeeze(2)
-            l_progress = feat['subgoal_progress']
-
-            pg_loss_goal = self.mse_loss(p_progress_goal, l_progress)
-            pg_loss_goal = pg_loss_goal.view(-1) * pad_valid.float() * valid.view(-1).float()
-
-            pg_loss_instr = self.mse_loss(p_progress_instr, l_progress)
-            pg_loss_instr = pg_loss_instr.view(-1) * pad_valid.float()
-
-            progress_loss = pg_loss_goal.mean() + pg_loss_instr.mean()
-
-            losses['progress_aux'] = self.args.pm_aux_loss_wt * progress_loss
-
-        return losses
-
-    def compute_loss_unflattened(self, out, batch, feat):
-        '''
-        loss function for Seq2Seq agent
-        '''
-        losses = dict()
-
-        # GT and predictions
-        p_alow = out['out_action_low']
-        l_alow = feat['action_low']
-        p_alow_mask = out['out_action_low_mask']
-        valid = feat['action_low_valid_interact']
-
-        # action loss
-        pad_valid = (l_alow != self.pad)
-        alow_loss = F.cross_entropy(p_alow, l_alow, reduction='none')
-        alow_loss *= pad_valid.float()
-        alow_loss = alow_loss.mean()
-        losses['action_low'] = alow_loss * self.args.action_loss_wt
-
-        # mask loss
-        valid_idxs = valid.view(-1).nonzero().view(-1)
-        flat_p_alow_mask = p_alow_mask.view(p_alow_mask.shape[0] * p_alow_mask.shape[1], p_alow_mask.shape[2])[valid_idxs]
-        losses['action_low_mask'] = self.ce_loss(flat_p_alow_mask, feat['action_low_mask_label']) * self.args.mask_loss_wt
-
-        # progress monitoring loss
-        if self.args.pm_aux_loss_wt > 0:
-            p_progress_goal = feat['out_progress_goal'].squeeze(2)
-            p_progress_instr = feat['out_progress_instr'].squeeze(2)
-            l_progress = feat['subgoal_progress']
-
-            pg_loss_goal = self.mse_loss(p_progress_goal, l_progress)
-            pg_loss_goal = pg_loss_goal.view(-1) * pad_valid.float() * valid.view(-1).float()
-
-            pg_loss_instr = self.mse_loss(p_progress_instr, l_progress)
-            pg_loss_instr = pg_loss_instr.view(-1) * pad_valid.float()
-
-            progress_loss = pg_loss_goal.mean() + pg_loss_instr.mean()
-
-            losses['progress_aux'] = self.args.pm_aux_loss_wt * progress_loss
-
-        return losses
-
-
-    def compute_loss_unsummed(self, out, batch, feat):
-        '''
-        loss function for Seq2Seq agent
-        '''
-        losses = []
-        for i in range(len(batch)):
-            _losses = []
-
-            # GT and predictions
-            p_alow = out['out_action_low'][i].view(-1, len(self.vocab['action_low']))
-            l_alow = feat['action_low'][i].view(-1)
-            p_alow_mask = out['out_action_low_mask'][i]
-            valid = feat['action_low_valid_interact'][i]
-
-            # action loss
-            pad_valid = (l_alow != self.pad)
-            alow_loss = F.cross_entropy(p_alow, l_alow, reduction='none')
-            alow_loss *= pad_valid.float()
-            alow_loss = alow_loss.mean()
-            _losses.append(alow_loss * self.args.action_loss_wt)
-
-            # mask loss
-            valid_idxs = valid.view(-1).nonzero().view(-1)
-            flat_p_alow_mask = p_alow_mask[valid_idxs]
-            _losses.append(F.cross_entropy(flat_p_alow_mask, feat['action_low_mask_label_unflattened'][i]) * self.args.mask_loss_wt)
-
-            # progress monitoring loss
-            if self.args.pm_aux_loss_wt > 0:
-                p_progress_goal = feat['out_progress_goal'][i].squeeze(1)
-                p_progress_instr = feat['out_progress_instr'][i].squeeze(1)
-                l_progress = feat['subgoal_progress'][i]
-
-                pg_loss_goal = F.mse_loss(p_progress_goal, l_progress, reduction='none')
-                pg_loss_goal = pg_loss_goal.view(-1) * pad_valid.float() * valid.view(-1).float()
-
-                pg_loss_instr = F.mse_loss(p_progress_instr, l_progress, reduction='none')
-                pg_loss_instr = pg_loss_instr.view(-1) * pad_valid.float()
-
-                progress_loss = pg_loss_goal.mean() + pg_loss_instr.mean()
-                _losses.append(progress_loss)
-
-            losses.append(sum(_losses))
-        losses = torch.stack(losses, dim=0) # np.array(losses)
-        return losses
-
-
-    def flip_tensor(self, tensor, on_zero=1, on_non_zero=0):
-        '''
-        flip 0 and 1 values in tensor
-        '''
-        res = tensor.clone()
-        res[tensor == 0] = on_zero
-        res[tensor != 0] = on_non_zero
-        return res
-
-
-    def compute_metric(self, preds, data):
-        '''
-        compute f1 and extract match scores for output
-        '''
-        m = collections.defaultdict(list)
-        for (task, _) in data:
-            ex = self.load_task_json(task)
-            i = self.get_task_and_ann_id(ex)
-            label = ' '.join([a['discrete_action']['action'] for a in ex['plan']['low_actions']])
-            m['action_low_f1'].append(compute_f1(label.lower(), preds[i]['action_low'].lower()))
-            m['action_low_em'].append(compute_exact(label.lower(), preds[i]['action_low'].lower()))
-
-        return {k: sum(v)/len(v) for k, v in m.items()}
-
-
-# Usage example:
-"""
-# Initialize model with LoRA configuration
-args.lora_rank = 8      # LoRA rank (smaller = fewer parameters)
-args.lora_scale = 1.0   # LoRA scaling factor
-args.lora_dropout = 0.1 # LoRA dropout rate
-
-model = Module(args, vocab)
-
-# For fine-tuning with LoRA (freeze original weights, train only LoRA)
-model.enable_lora_training()
-lora_optimizer = torch.optim.Adam(model.get_lora_parameters(), lr=1e-4)
-
-# For full model training (train all weights)
-model.disable_lora_training()
-full_optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
-
-# Save/load only LoRA weights (much smaller files)
-model.save_lora_weights('lora_weights.pt')
-model.load_lora_weights('lora_weights.pt')
-"""
+            max_tid = max(task_ids)
+            # prepare placeholders for each LoRALinear module
+            for module in model.modules():
+                if isinstance(module, LoRALinear):
+                    # ensure lora/scales exist for all tasks up to max
+                    for tid in range(0, max_tid + 1):
+                        tname = f'task_{tid}'
+                        if tname not in module.lora_A_dict:
+                            module._init_task_lora(tid)
+                        # ensure directions placeholder exists so it can be loaded
+                        if tname not in module.directions:
+                            dev = module.original_layer.weight.device
+                            dtype = module.original_layer.weight.dtype
+                            placeholder = torch.zeros(module.out_features, module.in_features, device=dev, dtype=dtype)
+                            module.directions[tname] = nn.Parameter(placeholder, requires_grad=False)
+                    # set task id to the highest available
+                    module.task_id = max(module.task_id, max_tid)
+            # now load with strict=False to be safe with any minor mismatches
+            missing, unexpected = model.load_state_dict(state, strict=False)
+            if unexpected:
+                print(f"[LoRA load] Ignored unexpected keys: {unexpected[:5]}{'...' if len(unexpected)>5 else ''}")
+            if missing:
+                print(f"[LoRA load] Missing keys count: {len(missing)}")
+
+        # optimizer (if present)
+        optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+        if 'optim' in save:
+            try:
+                optimizer.load_state_dict(save['optim'])
+            except Exception as e:
+                print(f"[LoRA load] Optimizer state load failed: {e}")
+        return model, optimizer
+    
+    

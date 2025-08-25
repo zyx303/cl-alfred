@@ -13,7 +13,7 @@ sys.path.append(os.path.join(os.environ['ALFRED_ROOT'], 'models'))
 sys.path.append(os.path.join(os.environ['ALFRED_ROOT'], 'gen'))
 # Add the models directory to the path
 sys.path.append(os.path.join(os.path.dirname(__file__), 'models'))
-from models.model.seq2seq_im_mask_lora import LoRALayer
+from models.model.seq2seq_im_mask_sdlora import LoRALayer
 
 def test_lora_layer():
     """Test basic LoRA layer functionality"""
@@ -40,7 +40,7 @@ def test_lora_linear():
     """Test LoRA linear layer functionality"""
     print("\nTesting LoRA Linear...")
     
-    from models.model.seq2seq_im_mask_lora import LoRALinear
+    from models.model.seq2seq_im_mask_sdlora import LoRALinear
     
     # Create original linear layer
     original = nn.Linear(128, 64)
@@ -68,7 +68,7 @@ def test_parameter_efficiency():
     """Test that LoRA significantly reduces trainable parameters"""
     print("\nTesting Parameter Efficiency...")
     
-    from models.model.seq2seq_im_mask_lora import LoRALinear
+    from models.model.seq2seq_im_mask_sdlora import LoRALinear
     
     # Create a large linear layer
     original = nn.Linear(1024, 1024)
@@ -134,7 +134,7 @@ def test_lora_attention_modules():
     """Test LoRA attention modules"""
     print("\nTesting LoRA Attention Modules...")
     
-    from models.model.seq2seq_im_mask_lora import LoRASelfAttn, LoRAScaledDotAttn
+    from models.model.seq2seq_im_mask_sdlora import LoRASelfAttn, LoRAScaledDotAttn
     
     # Test LoRA Self Attention
     self_attn = LoRASelfAttn(dhid=256, lora_rank=4)

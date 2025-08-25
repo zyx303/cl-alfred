@@ -28,7 +28,7 @@ class Eval(object):
             pprint.pprint({k: len(v) for k, v in self.splits.items()})
             
             #############################################################################
-            if self.args.incremental_setup in ['behavior_il']:
+            if self.args.incremental_setup in ['behavior_il','behavior_il_test']:
                 # filtering based on task types
                 print(self.args.stream_seed)
                 task_types = constants.BEHAVIOR_TYPES[self.args.stream_seed]

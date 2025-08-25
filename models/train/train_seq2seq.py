@@ -69,7 +69,7 @@ if __name__ == '__main__':
     parser.add_argument("--rnd_seed", type=int, default=1, help="Random seed number.")
     parser.add_argument("--stream_seed", type=int, help="Random seed number for stream.")
     parser.add_argument("--memory_size", type=int, default=500, help="Episodic memory size (# videos)")
-    parser.add_argument("--incremental_setup", type=str, choices=['behavior_il', 'environment_il', 'environment_il_nosampling'])
+    parser.add_argument("--incremental_setup", type=str, choices=['behavior_il','behavior_il_test', 'environment_il', 'environment_il_nosampling'])
 
     # Dataset
     parser.add_argument("--log_path", type=str, default="results", help="The path logs are saved.")
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     torch.backends.cudnn.benchmark = False
 
     # CL-ALFRED n_task
-    if args.incremental_setup in ['behavior_il']:
+    if args.incremental_setup in ['behavior_il','behavior_il_test']:
         args.n_tasks = 7
     elif args.incremental_setup in ['environment_il']:
         args.n_tasks = 4
