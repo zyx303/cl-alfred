@@ -30,6 +30,9 @@ class SDLoRA(ER):
         self.current_task_id = 0
         self.completed_tasks = set()  # Track completed tasks
         self.lora_optimizer = None
+
+        self.temp_batchsize = self.batch_size
+        self.memory = []
         
         # Setup optimizer for LoRA parameters only
         self._setup_lora_optimizer()
@@ -233,10 +236,10 @@ class SDLoRA(ER):
             total_loss.backward()
             
             # Gradient clipping for LoRA parameters
-            if self.lora_optimizer:
-                lora_params = self._get_current_task_lora_parameters()
-                if lora_params:
-                    torch.nn.utils.clip_grad_norm_(lora_params, 1.0)
+            # if self.lora_optimizer:
+            #     lora_params = self._get_current_task_lora_parameters()
+            #     if lora_params:
+            #         torch.nn.utils.clip_grad_norm_(lora_params, 1.0)
             
             # Update parameters
             self.optimizer.step()

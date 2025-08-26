@@ -6,7 +6,10 @@ from methods.der import DER
 from methods.xder import XDER
 from methods.cama_nodc import CAMA_NODC
 from methods.cama import CAMA
-from methods.sdlora import SDLoRA
+"""
+Note: sdlora is imported lazily to avoid import errors if the optional file is incomplete.
+We also lazy-import olora.
+"""
 
 
 def select_method(args, n_classes, model):
@@ -21,8 +24,15 @@ def select_method(args, n_classes, model):
         'xder': XDER,
         'cama_nodc': CAMA_NODC,
         'cama': CAMA,
-        'sdlora': SDLoRA,
     }
+
+    # Lazy imports for optional methods
+    if args.mode == 'sdlora':
+        from methods.sdlora import SDLoRA  # type: ignore
+        methods['sdlora'] = SDLoRA
+    if args.mode == 'olora':
+        from methods.olora import OLoRA  # type: ignore
+        methods['olora'] = OLoRA
 
     if args.mode in methods:
         method = methods[args.mode](n_classes, model, **kwargs)

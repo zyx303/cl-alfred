@@ -28,18 +28,17 @@ class ER:
         self.batch_size = kwargs["batchsize"]
         self.temp_batchsize = kwargs["temp_batchsize"]
         if self.temp_batchsize is None:
-            self.temp_batchsize = self.batch_size
+            self.temp_batchsize = self.batch_size//2
         if self.temp_batchsize > self.batch_size:
             self.temp_batchsize = self.batch_size
-        # self.memory_size -= self.temp_batchsize
+        self.memory_size -= self.temp_batchsize
 
         self.model = model
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
         self.lr_gamma = 0.9999
         self.scheduler = torch.optim.lr_scheduler.LambdaLR(self.optimizer, lambda iter: 1)
 
-        # self.memory = MemoryDataset(cls_list=self.exposed_classes, data_dir=self.data_dir)
-        self.memory = []
+        self.memory = MemoryDataset(cls_list=self.exposed_classes, data_dir=self.data_dir)
         self.temp_batch = []
         self.num_updates = 0
         self.train_count = 0
@@ -61,15 +60,16 @@ class ER:
                 stream_batch_size=self.temp_batchsize
             )
             self.report_training(sample_num, info)
-            # for stored_sample in self.temp_batch:
-            #     self.update_memory(stored_sample)
+            for stored_sample in self.temp_batch:
+                self.update_memory(stored_sample)
             self.temp_batch = []
             self.num_updates -= int(self.num_updates)
 
     def add_new_class(self, class_name):
         self.exposed_classes.append(class_name)
         self.num_learned_class = len(self.exposed_classes)
-        # self.memory.add_new_class(cls_list=self.exposed_classes)
+        if(len(self.memory)):
+            self.memory.add_new_class(cls_list=self.exposed_classes)
         if 'reset' in self.sched_name:
             self.update_schedule(reset=True)
 
@@ -119,16 +119,18 @@ class ER:
             self.writer.add_scalar(f'train/{k}', info[k], sample_num)
 
         # memory / frame sizes
-        # self.writer.add_scalar('train/memory_size', len(self.memory.images), sample_num)
-        # self.writer.add_scalar('train/frame_size', sum([m['num_frames'] for m in self.memory.images]), sample_num)
+        if(len(self.memory)):
+            self.writer.add_scalar('train/memory_size', len(self.memory.images), sample_num)
+            self.writer.add_scalar('train/frame_size', sum([m['num_frames'] for m in self.memory.images]), sample_num)
 
     def report_test(self, sample_num, eval_dict, tag=None):
         for k in eval_dict:
             self.writer.add_scalar(f"{tag}/{k}", eval_dict[k], sample_num)
 
         # memory / frame sizes
-        # self.writer.add_scalar('train/memory_size', len(self.memory.images), sample_num)
-        # self.writer.add_scalar('train/frame_size', sum([m['num_frames'] for m in self.memory.images]), sample_num)
+        if(len(self.memory)):
+            self.writer.add_scalar('train/memory_size', len(self.memory.images), sample_num)
+            self.writer.add_scalar('train/frame_size', sum([m['num_frames'] for m in self.memory.images]), sample_num)
 
     def update_memory(self, sample):
         self.reservoir_memory(sample)

@@ -82,6 +82,7 @@ if __name__ == '__main__':
     parser.add_argument("--sched_name", type=str, default="default", help="Scheduler name")
     parser.add_argument("--batchsize", type=int, default=32, help="batch size")
     parser.add_argument("--lr", type=float, default=1e-3, help="learning rate")
+    parser.add_argument("--epochs_per_task", type=int, default=1, help="number of epochs for each task (offline per-task training)")
 
     # Regularization
     parser.add_argument("--reg_coef", type=int, default=100, help="weighting for the regularization loss term")

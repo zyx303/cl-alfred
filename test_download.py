@@ -84,7 +84,7 @@ if __name__ == "__main__":
     
     # 执行下载
     success = downloader.download_with_retry(
-        repo_id="byeonghwikim/abp_dataset",
+        repo_id="byeonghwikim/abp_images",
         local_dir='data/json_feat_2.1.0',
         folder_pattern='train/**/feat_conv_panoramic.pt',
         repo_type="dataset"

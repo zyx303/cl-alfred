@@ -9,6 +9,14 @@ from torch.nn.utils.rnn import pad_sequence, pack_padded_sequence, pad_packed_se
 from model.seq2seq import Module as Base
 from models.utils.metric import compute_f1, compute_exact
 from gen.utils.image_util import decompress_mask
+import concurrent.futures
+from typing import List
+
+try:
+    from models.nn.llama_encoder import LlamaTextEncoder, LlamaEncoderConfig
+    _HAS_LLaMA = True
+except Exception:
+    _HAS_LLaMA = False
 # from utils.download_feat import download_hf_patterns
 
 import constants
@@ -24,11 +32,27 @@ class Module(Base):
         '''
         super().__init__(args, vocab)
 
-        # encoder and self-attention
-        self.enc_goal = nn.LSTM(args.demb, args.dhid, bidirectional=True, batch_first=True)
-        self.enc_instr = nn.LSTM(args.demb, args.dhid, bidirectional=True, batch_first=True)
-        self.enc_att_goal = vnn.SelfAttn(args.dhid*2)
-        self.enc_att_instr = vnn.SelfAttn(args.dhid*2)
+        # choose language encoder: LSTM (default) or LLaMA-2-7B
+        self.use_llama = getattr(args, 'lang_model', '').lower() in {'llama2-7b', 'llama-2-7b', 'llama2'}
+        if self.use_llama:
+            assert _HAS_LLaMA, "Transformers LLaMA encoder not available; please ensure transformers is installed."
+            llama_model_name = getattr(args, 'llama_model_name', 'meta-llama/Llama-2-7b-hf')
+            llama_dtype = getattr(args, 'llama_dtype', 'float16')
+            llama_max_length = int(getattr(args, 'llama_max_length', 512))
+            device = 'cuda' if args.gpu else 'cpu'
+            dtype = {'float16': torch.float16, 'bfloat16': torch.bfloat16, 'float32': torch.float32}.get(str(llama_dtype).lower(), torch.float16)
+            self.llama = LlamaTextEncoder(LlamaEncoderConfig(model_name_or_path=llama_model_name, device=device, dtype=dtype, max_length=llama_max_length))
+            llama_hidden = int(getattr(getattr(self.llama.model, 'config', None), 'hidden_size', 4096))
+            self.proj_goal = nn.Linear(llama_hidden, args.dhid*2)
+            self.proj_instr = nn.Linear(llama_hidden, args.dhid*2)
+            self.enc_att_goal = vnn.SelfAttn(args.dhid*2)
+            self.enc_att_instr = vnn.SelfAttn(args.dhid*2)
+        else:
+            # encoder and self-attention (legacy LSTM)
+            self.enc_goal = nn.LSTM(args.demb, args.dhid, bidirectional=True, batch_first=True)
+            self.enc_instr = nn.LSTM(args.demb, args.dhid, bidirectional=True, batch_first=True)
+            self.enc_att_goal = vnn.SelfAttn(args.dhid*2)
+            self.enc_att_instr = vnn.SelfAttn(args.dhid*2)
 
         # subgoal monitoring
         self.subgoal_monitoring = (self.args.pm_aux_loss_wt > 0 or self.args.subgoal_aux_loss_wt > 0)
@@ -69,6 +93,10 @@ class Module(Base):
         self.panoramic = args.panoramic
         self.orientation = args.orientation
 
+        # 并行 I/O 开关与并行度（无缓存）
+        self.enable_io_parallel = getattr(args, 'enable_io_parallel', True)
+        self.num_io_workers = int(getattr(args, 'num_io_workers', max(1, (os.cpu_count()//4 or 4))))
+
 
     def featurize(self, batch, load_mask=True, load_frames=True):
         '''
@@ -77,6 +105,8 @@ class Module(Base):
         device = torch.device('cuda') if self.args.gpu else torch.device('cpu')
         feat = collections.defaultdict(list)
 
+        # 先做非 I/O 的部分，并记录要加载的文件路径与有效帧数
+        to_load = []  # list[(path, valid_len)]
         for ex, swapColor in batch:
             ###########
             # auxillary
@@ -106,6 +136,18 @@ class Module(Base):
             # append goal + instr
             feat['lang_goal'].append(lang_goal)
             feat['lang_instr'].append(lang_instr)
+            if self.use_llama:
+                try:
+                    r_idx = ex['ann']['repeat_idx']
+                    goal_text = ex['turk_annotations']['anns'][r_idx]['task_desc']
+                    instr_text = ' '.join(ex['turk_annotations']['anns'][r_idx]['high_descs'])
+                except Exception:
+                    # fallback: join tokens if original text missing
+                    goal_text = ' '.join(ex.get('ann', {}).get('goal', []))
+                    instr_lists = ex.get('ann', {}).get('instr', [])
+                    instr_text = ' '.join([' '.join(x) for x in instr_lists])
+                feat.setdefault('lang_goal_text', []).append(goal_text)
+                feat.setdefault('lang_instr_text', []).append(instr_text)
 
             #########
             # outputs
@@ -144,30 +186,40 @@ class Module(Base):
             # load Resnet features from disk
             if load_frames and not self.test_mode:
                 root = self.get_task_root(ex)
-                # if swapColor in [0]:
-                im = torch.load(os.path.join(root, self.feat_pt))
-                # elif swapColor in [1, 2]:
-                #     im = torch.load(os.path.join(root, 'feat_conv_colorSwap{}_panoramic.pt'.format(swapColor)))
-                # elif swapColor in [3, 4, 5, 6]:
-                #     im = torch.load(os.path.join(root, 'feat_conv_onlyAutoAug{}_panoramic.pt'.format(swapColor - 2)))
-                
-                feat['frames'].append(im[2][:len(feat['action_low'][-1])])
+                path = os.path.join(root, self.feat_pt)
+                valid_len = len(feat['action_low'][-1])
+                to_load.append((path, valid_len))
 
-                feat['frames_left'].append(im[0][:len(feat['action_low'][-1])])
-                feat['frames_up'].append(im[1][:len(feat['action_low'][-1])])
-                feat['frames_down'].append(im[3][:len(feat['action_low'][-1])])
-                feat['frames_right'].append(im[4][:len(feat['action_low'][-1])])
+        if load_frames and not self.test_mode and len(to_load) > 0:
+            paths = [p for p, _ in to_load]
+            if self.enable_io_parallel and self.num_io_workers > 1:
+                with concurrent.futures.ThreadPoolExecutor(max_workers=self.num_io_workers) as pool:
+                    ims = list(pool.map(lambda p: torch.load(p, map_location='cpu'), paths))
+            else:
+                ims = [torch.load(p, map_location='cpu') for p in paths]
+
+            # 依 batch 顺序写回 feat
+            for (path, valid_len), im in zip(to_load, ims):
+                feat['frames'].append(im[2][:valid_len])
+                feat['frames_left'].append(im[0][:valid_len])
+                feat['frames_up'].append(im[1][:valid_len])
+                feat['frames_down'].append(im[3][:valid_len])
+                feat['frames_right'].append(im[4][:valid_len])
 
         # tensorization and padding
         for k, v in feat.items():
             if k in {'lang_goal', 'lang_instr'}:
                 # language embedding and padding
-                seqs = [torch.tensor(vv, device=device) for vv in v]
-                pad_seq = pad_sequence(seqs, batch_first=True, padding_value=self.pad)
-                seq_lengths = np.array(list(map(len, v)))
-                embed_seq = self.emb_word(pad_seq)
-                packed_input = pack_padded_sequence(embed_seq, seq_lengths, batch_first=True, enforce_sorted=False)
-                feat[k] = packed_input
+                if self.use_llama:
+                    # in llama mode we store texts separately; skip packing here
+                    continue
+                else:
+                    seqs = [torch.tensor(vv, device=device) for vv in v]
+                    pad_seq = pad_sequence(seqs, batch_first=True, padding_value=self.pad)
+                    seq_lengths = np.array(list(map(len, v)))
+                    embed_seq = self.emb_word(pad_seq)
+                    packed_input = pack_padded_sequence(embed_seq, seq_lengths, batch_first=True, enforce_sorted=False)
+                    feat[k] = packed_input
             elif k in {'action_low_mask'}:
                 # mask padding
                 seqs = [torch.tensor(vv, device=device, dtype=torch.float) for vv in v]
@@ -185,6 +237,9 @@ class Module(Base):
                 seqs = [torch.tensor(vv, device=device, dtype=torch.float) for vv in v]
                 pad_seq = pad_sequence(seqs, batch_first=True, padding_value=self.pad)
                 feat[k] = pad_seq
+            elif k in {'lang_goal_text', 'lang_instr_text'}:
+                # keep raw texts as Python list for LLaMA tokenizer
+                continue
             else:
                 # default: tensorize and pad sequence
                 seqs = [torch.tensor(vv, device=device, dtype=torch.float if ('frames' in k or 'orientation' in k) else torch.long) for vv in v]
@@ -237,35 +292,44 @@ class Module(Base):
         '''
         encode goal+instr language
         '''
-        emb_lang = feat['lang_goal']
-
-        self.lang_dropout(emb_lang.data)
-
-        enc_lang, _ = self.enc_goal(emb_lang)
-        enc_lang, _ = pad_packed_sequence(enc_lang, batch_first=True)
-
-        self.lang_dropout(enc_lang)
-
-        cont_lang = self.enc_att_goal(enc_lang)
-
-        return cont_lang, enc_lang
+        if self.use_llama:
+            texts: List[str] = feat.get('lang_goal_text', [])
+            if not texts:
+                # fallback: rebuild from tokens if not provided
+                texts = [''] * len(feat.get('frames', []))
+            enc_lang = self.llama.encode(texts)  # [B, T, H_llama]
+            enc_lang = self.lang_dropout(self.proj_goal(enc_lang))  # [B, T, 2*dhid]
+            cont_lang = self.enc_att_goal(enc_lang)
+            return cont_lang, enc_lang
+        else:
+            emb_lang = feat['lang_goal']
+            self.lang_dropout(emb_lang.data)
+            enc_lang, _ = self.enc_goal(emb_lang)
+            enc_lang, _ = pad_packed_sequence(enc_lang, batch_first=True)
+            self.lang_dropout(enc_lang)
+            cont_lang = self.enc_att_goal(enc_lang)
+            return cont_lang, enc_lang
 
     def encode_lang_instr(self, feat):
         '''
         encode goal+instr language
         '''
-        emb_lang = feat['lang_instr']
-
-        self.lang_dropout(emb_lang.data)
-
-        enc_lang, _ = self.enc_instr(emb_lang)
-        enc_lang, _ = pad_packed_sequence(enc_lang, batch_first=True)
-
-        self.lang_dropout(enc_lang)
-
-        cont_lang = self.enc_att_instr(enc_lang)
-
-        return cont_lang, enc_lang
+        if self.use_llama:
+            texts: List[str] = feat.get('lang_instr_text', [])
+            if not texts:
+                texts = [''] * len(feat.get('frames', []))
+            enc_lang = self.llama.encode(texts)
+            enc_lang = self.lang_dropout(self.proj_instr(enc_lang))
+            cont_lang = self.enc_att_instr(enc_lang)
+            return cont_lang, enc_lang
+        else:
+            emb_lang = feat['lang_instr']
+            self.lang_dropout(emb_lang.data)
+            enc_lang, _ = self.enc_instr(emb_lang)
+            enc_lang, _ = pad_packed_sequence(enc_lang, batch_first=True)
+            self.lang_dropout(enc_lang)
+            cont_lang = self.enc_att_instr(enc_lang)
+            return cont_lang, enc_lang
 
 
     def reset(self):

@@ -22,6 +22,15 @@ class StreamDataset(Dataset):
     def __len__(self):
         return len(self.images)
 
+    def __getitem__(self, idx):
+        """Return a tuple (task, swapColor) like the old get_data() produced.
+
+        swapColor is set to 0 for stream samples to keep behavior consistent
+        with the original code path using get_data().
+        """
+        img = self.images[idx]
+        return (img['task'], 0)
+
     @torch.no_grad()
     def get_data(self):
         data = dict()
