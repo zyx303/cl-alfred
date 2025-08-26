@@ -1,732 +1,732 @@
-[3193045.183] 
+[3195249.483] 
 X.Org X Server 1.21.1.4
 X Protocol Version 11, Revision 0
-[3193045.183] Current Operating System: Linux lyg0235 5.15.0-144-generic #157-Ubuntu SMP Mon Jun 16 07:33:10 UTC 2025 x86_64
-[3193045.183] Kernel command line: BOOT_IMAGE=/vmlinuz-5.15.0-144-generic root=/dev/mapper/ubuntu--vg-ubuntu--lv ro
-[3193045.183] xorg-server 2:21.1.4-2ubuntu1.7~22.04.15 (For technical support please see http://www.ubuntu.com/support) 
-[3193045.183] Current version of pixman: 0.40.0
-[3193045.183] 	Before reporting problems, check http://wiki.x.org
+[3195249.483] Current Operating System: Linux lyg0235 5.15.0-144-generic #157-Ubuntu SMP Mon Jun 16 07:33:10 UTC 2025 x86_64
+[3195249.483] Kernel command line: BOOT_IMAGE=/vmlinuz-5.15.0-144-generic root=/dev/mapper/ubuntu--vg-ubuntu--lv ro
+[3195249.483] xorg-server 2:21.1.4-2ubuntu1.7~22.04.15 (For technical support please see http://www.ubuntu.com/support) 
+[3195249.483] Current version of pixman: 0.40.0
+[3195249.483] 	Before reporting problems, check http://wiki.x.org
 	to make sure that you have the latest version.
-[3193045.184] Markers: (--) probed, (**) from config file, (==) default setting,
+[3195249.483] Markers: (--) probed, (**) from config file, (==) default setting,
 	(++) from command line, (!!) notice, (II) informational,
 	(WW) warning, (EE) error, (NI) not implemented, (??) unknown.
-[3193045.184] (++) Log file: "./xdummy.log", Time: Tue Aug 26 17:25:55 2025
-[3193045.184] (++) Using config file: "./xorg.conf"
-[3193045.184] (==) Using system config directory "/usr/share/X11/xorg.conf.d"
-[3193045.184] (==) ServerLayout "Layout0"
-[3193045.184] (**) |-->Screen "Screen0" (0)
-[3193045.184] (**) |   |-->Monitor "<default monitor>"
-[3193045.184] (**) |   |-->Device "Device0"
-[3193045.184] (==) No monitor specified for screen "Screen0".
+[3195249.483] (++) Log file: "./xdummy.log", Time: Tue Aug 26 18:02:39 2025
+[3195249.483] (++) Using config file: "./xorg.conf"
+[3195249.483] (==) Using system config directory "/usr/share/X11/xorg.conf.d"
+[3195249.483] (==) ServerLayout "Layout0"
+[3195249.483] (**) |-->Screen "Screen0" (0)
+[3195249.483] (**) |   |-->Monitor "<default monitor>"
+[3195249.484] (**) |   |-->Device "Device0"
+[3195249.484] (==) No monitor specified for screen "Screen0".
 	Using a default monitor configuration.
-[3193045.184] (**) Option "AllowMouseOpenFail" "true"
-[3193045.184] (**) Option "AutoAddGPU" "off"
-[3193045.184] (==) Automatically adding devices
-[3193045.184] (==) Automatically enabling devices
-[3193045.184] (**) Not automatically adding GPU devices
-[3193045.184] (==) Automatically binding GPU devices
-[3193045.184] (==) Max clients allowed: 256, resource mask: 0x1fffff
-[3193045.184] (WW) The directory "/usr/share/fonts/X11/cyrillic" does not exist.
-[3193045.184] 	Entry deleted from font path.
-[3193045.184] (WW) The directory "/usr/share/fonts/X11/100dpi/" does not exist.
-[3193045.184] 	Entry deleted from font path.
-[3193045.184] (WW) The directory "/usr/share/fonts/X11/75dpi/" does not exist.
-[3193045.184] 	Entry deleted from font path.
-[3193045.184] (WW) The directory "/usr/share/fonts/X11/Type1" does not exist.
-[3193045.184] 	Entry deleted from font path.
-[3193045.184] (WW) The directory "/usr/share/fonts/X11/100dpi" does not exist.
-[3193045.184] 	Entry deleted from font path.
-[3193045.184] (WW) The directory "/usr/share/fonts/X11/75dpi" does not exist.
-[3193045.184] 	Entry deleted from font path.
-[3193045.184] (==) FontPath set to:
+[3195249.484] (**) Option "AllowMouseOpenFail" "true"
+[3195249.484] (**) Option "AutoAddGPU" "off"
+[3195249.484] (==) Automatically adding devices
+[3195249.484] (==) Automatically enabling devices
+[3195249.484] (**) Not automatically adding GPU devices
+[3195249.484] (==) Automatically binding GPU devices
+[3195249.484] (==) Max clients allowed: 256, resource mask: 0x1fffff
+[3195249.484] (WW) The directory "/usr/share/fonts/X11/cyrillic" does not exist.
+[3195249.484] 	Entry deleted from font path.
+[3195249.484] (WW) The directory "/usr/share/fonts/X11/100dpi/" does not exist.
+[3195249.484] 	Entry deleted from font path.
+[3195249.484] (WW) The directory "/usr/share/fonts/X11/75dpi/" does not exist.
+[3195249.484] 	Entry deleted from font path.
+[3195249.484] (WW) The directory "/usr/share/fonts/X11/Type1" does not exist.
+[3195249.484] 	Entry deleted from font path.
+[3195249.484] (WW) The directory "/usr/share/fonts/X11/100dpi" does not exist.
+[3195249.484] 	Entry deleted from font path.
+[3195249.484] (WW) The directory "/usr/share/fonts/X11/75dpi" does not exist.
+[3195249.484] 	Entry deleted from font path.
+[3195249.484] (==) FontPath set to:
 	/usr/share/fonts/X11/misc,
 	built-ins
-[3193045.184] (==) ModulePath set to "/usr/lib/xorg/modules"
-[3193045.184] (II) The server relies on udev to provide the list of input devices.
+[3195249.484] (==) ModulePath set to "/usr/lib/xorg/modules"
+[3195249.484] (II) The server relies on udev to provide the list of input devices.
 	If no devices become available, reconfigure udev or disable AutoAddDevices.
-[3193045.184] (II) Loader magic: 0x563b10e63020
-[3193045.184] (II) Module ABI versions:
-[3193045.184] 	X.Org ANSI C Emulation: 0.4
-[3193045.184] 	X.Org Video Driver: 25.2
-[3193045.184] 	X.Org XInput driver : 24.4
-[3193045.184] 	X.Org Server Extension : 10.0
-[3193045.185] (--) using VT number 3
+[3195249.484] (II) Loader magic: 0x55ab2ec67020
+[3195249.484] (II) Module ABI versions:
+[3195249.484] 	X.Org ANSI C Emulation: 0.4
+[3195249.484] 	X.Org Video Driver: 25.2
+[3195249.484] 	X.Org XInput driver : 24.4
+[3195249.484] 	X.Org Server Extension : 10.0
+[3195249.485] (--) using VT number 3
 
-[3193045.185] (II) systemd-logind: logind integration requires -keeptty and -keeptty was not provided, disabling logind integration
-[3193045.187] (II) xfree86: Adding drm device (/dev/dri/card0)
-[3193045.187] (II) Platform probe for /sys/devices/pci0000:00/0000:00:0e.0/0000:01:00.0/0000:02:00.0/drm/card0
-[3193045.187] (II) xfree86: Adding drm device (/dev/dri/card1)
-[3193045.187] (II) Platform probe for /sys/devices/pci0000:15/0000:15:01.0/0000:16:00.0/drm/card1
-[3193045.187] (II) xfree86: Adding drm device (/dev/dri/card2)
-[3193045.187] (II) Platform probe for /sys/devices/pci0000:69/0000:69:01.0/0000:6a:00.0/drm/card2
-[3193045.187] (II) xfree86: Adding drm device (/dev/dri/card3)
-[3193045.187] (II) Platform probe for /sys/devices/pci0000:93/0000:93:01.0/0000:94:00.0/drm/card3
-[3193045.187] (II) xfree86: Adding drm device (/dev/dri/card4)
-[3193045.187] (II) Platform probe for /sys/devices/pci0000:bd/0000:bd:01.0/0000:be:00.0/drm/card4
-[3193045.188] (II) xfree86: Adding drm device (/dev/dri/card5)
-[3193045.188] (II) Platform probe for /sys/devices/pci0001:15/0001:15:01.0/0001:16:00.0/drm/card5
-[3193045.188] (II) xfree86: Adding drm device (/dev/dri/card6)
-[3193045.188] (II) Platform probe for /sys/devices/pci0001:69/0001:69:01.0/0001:6a:00.0/drm/card6
-[3193045.188] (II) xfree86: Adding drm device (/dev/dri/card7)
-[3193045.188] (II) Platform probe for /sys/devices/pci0001:93/0001:93:01.0/0001:94:00.0/drm/card7
-[3193045.188] (II) xfree86: Adding drm device (/dev/dri/card8)
-[3193045.188] (II) Platform probe for /sys/devices/pci0001:bd/0001:bd:01.0/0001:be:00.0/drm/card8
-[3193045.200] (**) OutputClass "nvidia" ModulePath extended to "/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/xorg/modules"
-[3193045.200] (**) OutputClass "nvidia" ModulePath extended to "/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/xorg/modules"
-[3193045.200] (**) OutputClass "nvidia" ModulePath extended to "/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/xorg/modules"
-[3193045.200] (**) OutputClass "nvidia" ModulePath extended to "/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/xorg/modules"
-[3193045.200] (**) OutputClass "nvidia" ModulePath extended to "/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/xorg/modules"
-[3193045.200] (**) OutputClass "nvidia" ModulePath extended to "/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/xorg/modules"
-[3193045.200] (**) OutputClass "nvidia" ModulePath extended to "/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/xorg/modules"
-[3193045.200] (**) OutputClass "nvidia" ModulePath extended to "/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/xorg/modules"
-[3193045.212] (--) PCI:*(2@0:0:0) 1a03:2000:1a03:2000 rev 82, Mem @ 0xa4000000/16777216, 0xa5000000/262144, I/O @ 0x00002000/128
-[3193045.212] (--) PCI: (22@0:0:0) 10de:2684:10de:16f3 rev 161, Mem @ 0xac000000/16777216, 0x21ffe0000000/268435456, 0x21fff0000000/33554432, I/O @ 0x00005000/128, BIOS @ 0x????????/524288
-[3193045.212] (--) PCI: (106@0:0:0) 10de:2684:10de:16f3 rev 161, Mem @ 0xbd000000/16777216, 0x23ffe0000000/268435456, 0x23fff0000000/33554432, I/O @ 0x00007000/128, BIOS @ 0x????????/524288
-[3193045.212] (--) PCI: (148@0:0:0) 10de:2684:10de:16f3 rev 161, Mem @ 0xc5000000/16777216, 0x24ffe0000000/268435456, 0x24fff0000000/33554432, I/O @ 0x00008000/128, BIOS @ 0x????????/524288
-[3193045.212] (--) PCI: (190@0:0:0) 10de:2684:10de:16f3 rev 161, Mem @ 0xcd000000/16777216, 0x25ffe0000000/268435456, 0x25fff0000000/33554432, I/O @ 0x00009000/128, BIOS @ 0x????????/524288
-[3193045.212] (--) PCI: (22@1:0:0) 10de:2684:10de:16f3 rev 161, Mem @ 0xdd000000/16777216, 0x2bffe0000000/268435456, 0x2bfff0000000/33554432, I/O @ 0x0000b000/128, BIOS @ 0x????????/524288
-[3193045.212] (--) PCI: (106@1:0:0) 10de:2684:10de:16f3 rev 161, Mem @ 0xea000000/16777216, 0x2dffe0000000/268435456, 0x2dfff0000000/33554432, I/O @ 0x0000d000/128, BIOS @ 0x????????/524288
-[3193045.212] (--) PCI: (148@1:0:0) 10de:2684:10de:16f3 rev 161, Mem @ 0xf1000000/16777216, 0x2effe0000000/268435456, 0x2efff0000000/33554432, I/O @ 0x0000e000/128, BIOS @ 0x????????/524288
-[3193045.212] (--) PCI: (190@1:0:0) 10de:2684:10de:16f3 rev 161, Mem @ 0xf8000000/16777216, 0x2fffe0000000/268435456, 0x2ffff0000000/33554432, I/O @ 0x0000f000/128, BIOS @ 0x????????/524288
-[3193045.212] (II) LoadModule: "glx"
-[3193045.212] (II) Loading /usr/lib/xorg/modules/extensions/libglx.so
-[3193045.213] (II) Module glx: vendor="X.Org Foundation"
-[3193045.213] 	compiled for 1.21.1.4, module version = 1.0.0
-[3193045.213] 	ABI class: X.Org Server Extension, version 10.0
-[3193045.213] (II) LoadModule: "nvidia"
-[3193045.213] (II) Loading /usr/lib/x86_64-linux-gnu/nvidia/xorg/nvidia_drv.so
-[3193045.213] (II) Module nvidia: vendor="NVIDIA Corporation"
-[3193045.213] 	compiled for 1.6.99.901, module version = 1.0.0
-[3193045.213] 	Module class: X.Org Video Driver
-[3193045.213] (II) NVIDIA dlloader X Driver  570.144  Thu Apr 10 20:05:34 UTC 2025
-[3193045.213] (II) NVIDIA Unified Driver for all Supported NVIDIA GPUs
-[3193045.214] (II) Loading sub module "fb"
-[3193045.215] (II) LoadModule: "fb"
-[3193045.215] (II) Module "fb" already built-in
-[3193045.215] (II) Loading sub module "wfb"
-[3193045.215] (II) LoadModule: "wfb"
-[3193045.215] (II) Loading /usr/lib/xorg/modules/libwfb.so
-[3193045.215] (II) Module wfb: vendor="X.Org Foundation"
-[3193045.215] 	compiled for 1.21.1.4, module version = 1.0.0
-[3193045.215] 	ABI class: X.Org ANSI C Emulation, version 0.4
-[3193045.216] (**) NVIDIA(0): Depth 24, (--) framebuffer bpp 32
-[3193045.216] (==) NVIDIA(0): RGB weight 888
-[3193045.216] (==) NVIDIA(0): Default visual is TrueColor
-[3193045.216] (==) NVIDIA(0): Using gamma correction (1.0, 1.0, 1.0)
-[3193045.216] (II) Applying OutputClass "nvidia" options to /dev/dri/card1
-[3193045.216] (**) NVIDIA(0): Option "AllowEmptyInitialConfiguration" "True"
-[3193045.216] (**) NVIDIA(0): Enabling 2D acceleration
-[3193045.216] (II) Loading sub module "glxserver_nvidia"
-[3193045.216] (II) LoadModule: "glxserver_nvidia"
-[3193045.216] (II) Loading /usr/lib/x86_64-linux-gnu/nvidia/xorg/libglxserver_nvidia.so
-[3193045.233] (II) Module glxserver_nvidia: vendor="NVIDIA Corporation"
-[3193045.233] 	compiled for 1.6.99.901, module version = 1.0.0
-[3193045.233] 	Module class: X.Org Server Extension
-[3193045.233] (II) NVIDIA GLX Module  570.144  Thu Apr 10 20:06:53 UTC 2025
-[3193045.233] (II) NVIDIA: The X server supports PRIME Render Offload.
-[3193045.236] (--) NVIDIA(0): Valid display device(s) on GPU-0 at PCI:22:0:0
-[3193045.236] (--) NVIDIA(0):     DFP-0
-[3193045.236] (--) NVIDIA(0):     DFP-1
-[3193045.236] (--) NVIDIA(0):     DFP-2
-[3193045.236] (--) NVIDIA(0):     DFP-3
-[3193045.236] (--) NVIDIA(0):     DFP-4
-[3193045.236] (--) NVIDIA(0):     DFP-5
-[3193045.236] (--) NVIDIA(0):     DFP-6
-[3193045.245] (II) NVIDIA(0): NVIDIA GPU NVIDIA GeForce RTX 4090 (AD102-A) at PCI:22:0:0
-[3193045.245] (II) NVIDIA(0):     (GPU-0)
-[3193045.245] (--) NVIDIA(0): Memory: 50319360 kBytes
-[3193045.245] (--) NVIDIA(0): VideoBIOS: 95.02.3c.c0.7b
-[3193045.245] (II) NVIDIA(0): Detected PCI Express Link width: 16X
-[3193045.246] (--) NVIDIA(GPU-0): DFP-0: disconnected
-[3193045.246] (--) NVIDIA(GPU-0): DFP-0: Internal TMDS
-[3193045.246] (--) NVIDIA(GPU-0): DFP-0: 165.0 MHz maximum pixel clock
-[3193045.246] (--) NVIDIA(GPU-0): 
-[3193045.246] (--) NVIDIA(GPU-0): DFP-1: disconnected
-[3193045.246] (--) NVIDIA(GPU-0): DFP-1: Internal DisplayPort
-[3193045.246] (--) NVIDIA(GPU-0): DFP-1: 2670.0 MHz maximum pixel clock
-[3193045.246] (--) NVIDIA(GPU-0): 
-[3193045.246] (--) NVIDIA(GPU-0): DFP-2: disconnected
-[3193045.246] (--) NVIDIA(GPU-0): DFP-2: Internal TMDS
-[3193045.246] (--) NVIDIA(GPU-0): DFP-2: 165.0 MHz maximum pixel clock
-[3193045.246] (--) NVIDIA(GPU-0): 
-[3193045.246] (--) NVIDIA(GPU-0): DFP-3: disconnected
-[3193045.246] (--) NVIDIA(GPU-0): DFP-3: Internal DisplayPort
-[3193045.246] (--) NVIDIA(GPU-0): DFP-3: 2670.0 MHz maximum pixel clock
-[3193045.246] (--) NVIDIA(GPU-0): 
-[3193045.247] (--) NVIDIA(GPU-0): DFP-4: disconnected
-[3193045.247] (--) NVIDIA(GPU-0): DFP-4: Internal TMDS
-[3193045.247] (--) NVIDIA(GPU-0): DFP-4: 165.0 MHz maximum pixel clock
-[3193045.247] (--) NVIDIA(GPU-0): 
-[3193045.247] (--) NVIDIA(GPU-0): DFP-5: disconnected
-[3193045.247] (--) NVIDIA(GPU-0): DFP-5: Internal DisplayPort
-[3193045.247] (--) NVIDIA(GPU-0): DFP-5: 2670.0 MHz maximum pixel clock
-[3193045.247] (--) NVIDIA(GPU-0): 
-[3193045.247] (--) NVIDIA(GPU-0): DFP-6: disconnected
-[3193045.247] (--) NVIDIA(GPU-0): DFP-6: Internal TMDS
-[3193045.247] (--) NVIDIA(GPU-0): DFP-6: 165.0 MHz maximum pixel clock
-[3193045.247] (--) NVIDIA(GPU-0): 
-[3193045.247] (==) NVIDIA(0): 
-[3193045.247] (==) NVIDIA(0): No modes were requested; the default mode "nvidia-auto-select"
-[3193045.247] (==) NVIDIA(0):     will be used as the requested mode.
-[3193045.247] (==) NVIDIA(0): 
-[3193045.247] (--) NVIDIA(0): No enabled display devices found; starting anyway because
-[3193045.247] (--) NVIDIA(0):     AllowEmptyInitialConfiguration is enabled
-[3193045.252] (II) NVIDIA(0): Validated MetaModes:
-[3193045.252] (II) NVIDIA(0):     "NULL"
-[3193045.252] (**) NVIDIA(0): Virtual screen size configured to be 1024 x 768
-[3193045.252] (WW) NVIDIA(0): Unable to get display device for DPI computation.
-[3193045.252] (==) NVIDIA(0): DPI set to (75, 75); computed from built-in default
-[3193045.255] (--) NVIDIA(0): Valid display device(s) on GPU-1 at PCI:106:0:0
-[3193045.255] (--) NVIDIA(0):     DFP-0
-[3193045.255] (--) NVIDIA(0):     DFP-1
-[3193045.255] (--) NVIDIA(0):     DFP-2
-[3193045.255] (--) NVIDIA(0):     DFP-3
-[3193045.255] (--) NVIDIA(0):     DFP-4
-[3193045.255] (--) NVIDIA(0):     DFP-5
-[3193045.255] (--) NVIDIA(0):     DFP-6
-[3193045.264] (--) NVIDIA(GPU-1): DFP-0: disconnected
-[3193045.264] (--) NVIDIA(GPU-1): DFP-0: Internal TMDS
-[3193045.264] (--) NVIDIA(GPU-1): DFP-0: 165.0 MHz maximum pixel clock
-[3193045.264] (--) NVIDIA(GPU-1): 
-[3193045.264] (--) NVIDIA(GPU-1): DFP-1: disconnected
-[3193045.264] (--) NVIDIA(GPU-1): DFP-1: Internal DisplayPort
-[3193045.264] (--) NVIDIA(GPU-1): DFP-1: 2670.0 MHz maximum pixel clock
-[3193045.264] (--) NVIDIA(GPU-1): 
-[3193045.264] (--) NVIDIA(GPU-1): DFP-2: disconnected
-[3193045.264] (--) NVIDIA(GPU-1): DFP-2: Internal TMDS
-[3193045.264] (--) NVIDIA(GPU-1): DFP-2: 165.0 MHz maximum pixel clock
-[3193045.264] (--) NVIDIA(GPU-1): 
-[3193045.264] (--) NVIDIA(GPU-1): DFP-3: disconnected
-[3193045.264] (--) NVIDIA(GPU-1): DFP-3: Internal DisplayPort
-[3193045.264] (--) NVIDIA(GPU-1): DFP-3: 2670.0 MHz maximum pixel clock
-[3193045.264] (--) NVIDIA(GPU-1): 
-[3193045.264] (--) NVIDIA(GPU-1): DFP-4: disconnected
-[3193045.264] (--) NVIDIA(GPU-1): DFP-4: Internal TMDS
-[3193045.264] (--) NVIDIA(GPU-1): DFP-4: 165.0 MHz maximum pixel clock
-[3193045.264] (--) NVIDIA(GPU-1): 
-[3193045.264] (--) NVIDIA(GPU-1): DFP-5: disconnected
-[3193045.264] (--) NVIDIA(GPU-1): DFP-5: Internal DisplayPort
-[3193045.264] (--) NVIDIA(GPU-1): DFP-5: 2670.0 MHz maximum pixel clock
-[3193045.264] (--) NVIDIA(GPU-1): 
-[3193045.265] (--) NVIDIA(GPU-1): DFP-6: disconnected
-[3193045.265] (--) NVIDIA(GPU-1): DFP-6: Internal TMDS
-[3193045.265] (--) NVIDIA(GPU-1): DFP-6: 165.0 MHz maximum pixel clock
-[3193045.265] (--) NVIDIA(GPU-1): 
-[3193045.272] (II) NVIDIA(GPU-1): NVIDIA GPU NVIDIA GeForce RTX 4090 (AD102-A) at PCI:106:0:0
-[3193045.272] (II) NVIDIA(GPU-1):     (GPU-1)
-[3193045.272] (--) NVIDIA(GPU-1): Memory: 50319360 kBytes
-[3193045.272] (--) NVIDIA(GPU-1): VideoBIOS: 95.02.3c.c0.7b
-[3193045.272] (II) NVIDIA(GPU-1): Detected PCI Express Link width: 16X
-[3193045.274] (--) NVIDIA(0): Valid display device(s) on GPU-2 at PCI:148:0:0
-[3193045.274] (--) NVIDIA(0):     DFP-0
-[3193045.274] (--) NVIDIA(0):     DFP-1
-[3193045.274] (--) NVIDIA(0):     DFP-2
-[3193045.274] (--) NVIDIA(0):     DFP-3
-[3193045.275] (--) NVIDIA(0):     DFP-4
-[3193045.275] (--) NVIDIA(0):     DFP-5
-[3193045.275] (--) NVIDIA(0):     DFP-6
-[3193045.284] (--) NVIDIA(GPU-2): DFP-0: disconnected
-[3193045.284] (--) NVIDIA(GPU-2): DFP-0: Internal TMDS
-[3193045.284] (--) NVIDIA(GPU-2): DFP-0: 165.0 MHz maximum pixel clock
-[3193045.284] (--) NVIDIA(GPU-2): 
-[3193045.284] (--) NVIDIA(GPU-2): DFP-1: disconnected
-[3193045.284] (--) NVIDIA(GPU-2): DFP-1: Internal DisplayPort
-[3193045.284] (--) NVIDIA(GPU-2): DFP-1: 2670.0 MHz maximum pixel clock
-[3193045.284] (--) NVIDIA(GPU-2): 
-[3193045.284] (--) NVIDIA(GPU-2): DFP-2: disconnected
-[3193045.284] (--) NVIDIA(GPU-2): DFP-2: Internal TMDS
-[3193045.284] (--) NVIDIA(GPU-2): DFP-2: 165.0 MHz maximum pixel clock
-[3193045.284] (--) NVIDIA(GPU-2): 
-[3193045.284] (--) NVIDIA(GPU-2): DFP-3: disconnected
-[3193045.284] (--) NVIDIA(GPU-2): DFP-3: Internal DisplayPort
-[3193045.284] (--) NVIDIA(GPU-2): DFP-3: 2670.0 MHz maximum pixel clock
-[3193045.284] (--) NVIDIA(GPU-2): 
-[3193045.285] (--) NVIDIA(GPU-2): DFP-4: disconnected
-[3193045.285] (--) NVIDIA(GPU-2): DFP-4: Internal TMDS
-[3193045.285] (--) NVIDIA(GPU-2): DFP-4: 165.0 MHz maximum pixel clock
-[3193045.285] (--) NVIDIA(GPU-2): 
-[3193045.285] (--) NVIDIA(GPU-2): DFP-5: disconnected
-[3193045.285] (--) NVIDIA(GPU-2): DFP-5: Internal DisplayPort
-[3193045.285] (--) NVIDIA(GPU-2): DFP-5: 2670.0 MHz maximum pixel clock
-[3193045.285] (--) NVIDIA(GPU-2): 
-[3193045.285] (--) NVIDIA(GPU-2): DFP-6: disconnected
-[3193045.285] (--) NVIDIA(GPU-2): DFP-6: Internal TMDS
-[3193045.285] (--) NVIDIA(GPU-2): DFP-6: 165.0 MHz maximum pixel clock
-[3193045.285] (--) NVIDIA(GPU-2): 
-[3193045.292] (II) NVIDIA(GPU-2): NVIDIA GPU NVIDIA GeForce RTX 4090 (AD102-A) at PCI:148:0:0
-[3193045.292] (II) NVIDIA(GPU-2):     (GPU-2)
-[3193045.292] (--) NVIDIA(GPU-2): Memory: 50319360 kBytes
-[3193045.292] (--) NVIDIA(GPU-2): VideoBIOS: 95.02.3c.00.02
-[3193045.292] (II) NVIDIA(GPU-2): Detected PCI Express Link width: 16X
-[3193045.295] (--) NVIDIA(0): Valid display device(s) on GPU-3 at PCI:190:0:0
-[3193045.295] (--) NVIDIA(0):     DFP-0
-[3193045.295] (--) NVIDIA(0):     DFP-1
-[3193045.295] (--) NVIDIA(0):     DFP-2
-[3193045.295] (--) NVIDIA(0):     DFP-3
-[3193045.295] (--) NVIDIA(0):     DFP-4
-[3193045.295] (--) NVIDIA(0):     DFP-5
-[3193045.295] (--) NVIDIA(0):     DFP-6
-[3193045.304] (--) NVIDIA(GPU-3): DFP-0: disconnected
-[3193045.304] (--) NVIDIA(GPU-3): DFP-0: Internal TMDS
-[3193045.304] (--) NVIDIA(GPU-3): DFP-0: 165.0 MHz maximum pixel clock
-[3193045.304] (--) NVIDIA(GPU-3): 
-[3193045.304] (--) NVIDIA(GPU-3): DFP-1: disconnected
-[3193045.304] (--) NVIDIA(GPU-3): DFP-1: Internal DisplayPort
-[3193045.304] (--) NVIDIA(GPU-3): DFP-1: 2670.0 MHz maximum pixel clock
-[3193045.304] (--) NVIDIA(GPU-3): 
-[3193045.304] (--) NVIDIA(GPU-3): DFP-2: disconnected
-[3193045.304] (--) NVIDIA(GPU-3): DFP-2: Internal TMDS
-[3193045.304] (--) NVIDIA(GPU-3): DFP-2: 165.0 MHz maximum pixel clock
-[3193045.304] (--) NVIDIA(GPU-3): 
-[3193045.304] (--) NVIDIA(GPU-3): DFP-3: disconnected
-[3193045.304] (--) NVIDIA(GPU-3): DFP-3: Internal DisplayPort
-[3193045.304] (--) NVIDIA(GPU-3): DFP-3: 2670.0 MHz maximum pixel clock
-[3193045.304] (--) NVIDIA(GPU-3): 
-[3193045.304] (--) NVIDIA(GPU-3): DFP-4: disconnected
-[3193045.304] (--) NVIDIA(GPU-3): DFP-4: Internal TMDS
-[3193045.304] (--) NVIDIA(GPU-3): DFP-4: 165.0 MHz maximum pixel clock
-[3193045.304] (--) NVIDIA(GPU-3): 
-[3193045.304] (--) NVIDIA(GPU-3): DFP-5: disconnected
-[3193045.304] (--) NVIDIA(GPU-3): DFP-5: Internal DisplayPort
-[3193045.304] (--) NVIDIA(GPU-3): DFP-5: 2670.0 MHz maximum pixel clock
-[3193045.304] (--) NVIDIA(GPU-3): 
-[3193045.305] (--) NVIDIA(GPU-3): DFP-6: disconnected
-[3193045.305] (--) NVIDIA(GPU-3): DFP-6: Internal TMDS
-[3193045.305] (--) NVIDIA(GPU-3): DFP-6: 165.0 MHz maximum pixel clock
-[3193045.305] (--) NVIDIA(GPU-3): 
-[3193045.312] (II) NVIDIA(GPU-3): NVIDIA GPU NVIDIA GeForce RTX 4090 (AD102-A) at PCI:190:0:0
-[3193045.312] (II) NVIDIA(GPU-3):     (GPU-3)
-[3193045.312] (--) NVIDIA(GPU-3): Memory: 50319360 kBytes
-[3193045.312] (--) NVIDIA(GPU-3): VideoBIOS: 95.02.3c.c0.7b
-[3193045.312] (II) NVIDIA(GPU-3): Detected PCI Express Link width: 16X
-[3193045.314] (--) NVIDIA(0): Valid display device(s) on GPU-4 at PCI:22@1:0:0
-[3193045.314] (--) NVIDIA(0):     DFP-0
-[3193045.314] (--) NVIDIA(0):     DFP-1
-[3193045.314] (--) NVIDIA(0):     DFP-2
-[3193045.314] (--) NVIDIA(0):     DFP-3
-[3193045.314] (--) NVIDIA(0):     DFP-4
-[3193045.314] (--) NVIDIA(0):     DFP-5
-[3193045.314] (--) NVIDIA(0):     DFP-6
-[3193045.323] (--) NVIDIA(GPU-4): DFP-0: disconnected
-[3193045.324] (--) NVIDIA(GPU-4): DFP-0: Internal TMDS
-[3193045.324] (--) NVIDIA(GPU-4): DFP-0: 165.0 MHz maximum pixel clock
-[3193045.324] (--) NVIDIA(GPU-4): 
-[3193045.324] (--) NVIDIA(GPU-4): DFP-1: disconnected
-[3193045.324] (--) NVIDIA(GPU-4): DFP-1: Internal DisplayPort
-[3193045.324] (--) NVIDIA(GPU-4): DFP-1: 2670.0 MHz maximum pixel clock
-[3193045.324] (--) NVIDIA(GPU-4): 
-[3193045.324] (--) NVIDIA(GPU-4): DFP-2: disconnected
-[3193045.324] (--) NVIDIA(GPU-4): DFP-2: Internal TMDS
-[3193045.324] (--) NVIDIA(GPU-4): DFP-2: 165.0 MHz maximum pixel clock
-[3193045.324] (--) NVIDIA(GPU-4): 
-[3193045.324] (--) NVIDIA(GPU-4): DFP-3: disconnected
-[3193045.324] (--) NVIDIA(GPU-4): DFP-3: Internal DisplayPort
-[3193045.324] (--) NVIDIA(GPU-4): DFP-3: 2670.0 MHz maximum pixel clock
-[3193045.324] (--) NVIDIA(GPU-4): 
-[3193045.324] (--) NVIDIA(GPU-4): DFP-4: disconnected
-[3193045.324] (--) NVIDIA(GPU-4): DFP-4: Internal TMDS
-[3193045.324] (--) NVIDIA(GPU-4): DFP-4: 165.0 MHz maximum pixel clock
-[3193045.324] (--) NVIDIA(GPU-4): 
-[3193045.324] (--) NVIDIA(GPU-4): DFP-5: disconnected
-[3193045.324] (--) NVIDIA(GPU-4): DFP-5: Internal DisplayPort
-[3193045.324] (--) NVIDIA(GPU-4): DFP-5: 2670.0 MHz maximum pixel clock
-[3193045.324] (--) NVIDIA(GPU-4): 
-[3193045.325] (--) NVIDIA(GPU-4): DFP-6: disconnected
-[3193045.325] (--) NVIDIA(GPU-4): DFP-6: Internal TMDS
-[3193045.325] (--) NVIDIA(GPU-4): DFP-6: 165.0 MHz maximum pixel clock
-[3193045.325] (--) NVIDIA(GPU-4): 
-[3193045.331] (II) NVIDIA(GPU-4): NVIDIA GPU NVIDIA GeForce RTX 4090 (AD102-A) at PCI:22@1:0:0
-[3193045.331] (II) NVIDIA(GPU-4):     (GPU-4)
-[3193045.331] (--) NVIDIA(GPU-4): Memory: 50319360 kBytes
-[3193045.331] (--) NVIDIA(GPU-4): VideoBIOS: 95.02.3c.c0.7b
-[3193045.331] (II) NVIDIA(GPU-4): Detected PCI Express Link width: 16X
-[3193045.334] (--) NVIDIA(0): Valid display device(s) on GPU-5 at PCI:106@1:0:0
-[3193045.334] (--) NVIDIA(0):     DFP-0
-[3193045.334] (--) NVIDIA(0):     DFP-1
-[3193045.334] (--) NVIDIA(0):     DFP-2
-[3193045.334] (--) NVIDIA(0):     DFP-3
-[3193045.334] (--) NVIDIA(0):     DFP-4
-[3193045.334] (--) NVIDIA(0):     DFP-5
-[3193045.334] (--) NVIDIA(0):     DFP-6
-[3193045.343] (--) NVIDIA(GPU-5): DFP-0: disconnected
-[3193045.343] (--) NVIDIA(GPU-5): DFP-0: Internal TMDS
-[3193045.343] (--) NVIDIA(GPU-5): DFP-0: 165.0 MHz maximum pixel clock
-[3193045.343] (--) NVIDIA(GPU-5): 
-[3193045.343] (--) NVIDIA(GPU-5): DFP-1: disconnected
-[3193045.343] (--) NVIDIA(GPU-5): DFP-1: Internal DisplayPort
-[3193045.343] (--) NVIDIA(GPU-5): DFP-1: 2670.0 MHz maximum pixel clock
-[3193045.343] (--) NVIDIA(GPU-5): 
-[3193045.343] (--) NVIDIA(GPU-5): DFP-2: disconnected
-[3193045.343] (--) NVIDIA(GPU-5): DFP-2: Internal TMDS
-[3193045.343] (--) NVIDIA(GPU-5): DFP-2: 165.0 MHz maximum pixel clock
-[3193045.343] (--) NVIDIA(GPU-5): 
-[3193045.343] (--) NVIDIA(GPU-5): DFP-3: disconnected
-[3193045.343] (--) NVIDIA(GPU-5): DFP-3: Internal DisplayPort
-[3193045.343] (--) NVIDIA(GPU-5): DFP-3: 2670.0 MHz maximum pixel clock
-[3193045.343] (--) NVIDIA(GPU-5): 
-[3193045.344] (--) NVIDIA(GPU-5): DFP-4: disconnected
-[3193045.344] (--) NVIDIA(GPU-5): DFP-4: Internal TMDS
-[3193045.344] (--) NVIDIA(GPU-5): DFP-4: 165.0 MHz maximum pixel clock
-[3193045.344] (--) NVIDIA(GPU-5): 
-[3193045.344] (--) NVIDIA(GPU-5): DFP-5: disconnected
-[3193045.344] (--) NVIDIA(GPU-5): DFP-5: Internal DisplayPort
-[3193045.344] (--) NVIDIA(GPU-5): DFP-5: 2670.0 MHz maximum pixel clock
-[3193045.344] (--) NVIDIA(GPU-5): 
-[3193045.344] (--) NVIDIA(GPU-5): DFP-6: disconnected
-[3193045.344] (--) NVIDIA(GPU-5): DFP-6: Internal TMDS
-[3193045.344] (--) NVIDIA(GPU-5): DFP-6: 165.0 MHz maximum pixel clock
-[3193045.344] (--) NVIDIA(GPU-5): 
-[3193045.351] (II) NVIDIA(GPU-5): NVIDIA GPU NVIDIA GeForce RTX 4090 (AD102-A) at PCI:106@1:0:0
-[3193045.351] (II) NVIDIA(GPU-5):     (GPU-5)
-[3193045.351] (--) NVIDIA(GPU-5): Memory: 50319360 kBytes
-[3193045.351] (--) NVIDIA(GPU-5): VideoBIOS: 95.02.3c.c0.7b
-[3193045.351] (II) NVIDIA(GPU-5): Detected PCI Express Link width: 16X
-[3193045.354] (--) NVIDIA(0): Valid display device(s) on GPU-6 at PCI:148@1:0:0
-[3193045.354] (--) NVIDIA(0):     DFP-0
-[3193045.354] (--) NVIDIA(0):     DFP-1
-[3193045.354] (--) NVIDIA(0):     DFP-2
-[3193045.354] (--) NVIDIA(0):     DFP-3
-[3193045.354] (--) NVIDIA(0):     DFP-4
-[3193045.354] (--) NVIDIA(0):     DFP-5
-[3193045.354] (--) NVIDIA(0):     DFP-6
-[3193045.362] (--) NVIDIA(GPU-6): DFP-0: disconnected
-[3193045.362] (--) NVIDIA(GPU-6): DFP-0: Internal TMDS
-[3193045.362] (--) NVIDIA(GPU-6): DFP-0: 165.0 MHz maximum pixel clock
-[3193045.362] (--) NVIDIA(GPU-6): 
-[3193045.362] (--) NVIDIA(GPU-6): DFP-1: disconnected
-[3193045.362] (--) NVIDIA(GPU-6): DFP-1: Internal DisplayPort
-[3193045.362] (--) NVIDIA(GPU-6): DFP-1: 2670.0 MHz maximum pixel clock
-[3193045.362] (--) NVIDIA(GPU-6): 
-[3193045.363] (--) NVIDIA(GPU-6): DFP-2: disconnected
-[3193045.363] (--) NVIDIA(GPU-6): DFP-2: Internal TMDS
-[3193045.363] (--) NVIDIA(GPU-6): DFP-2: 165.0 MHz maximum pixel clock
-[3193045.363] (--) NVIDIA(GPU-6): 
-[3193045.363] (--) NVIDIA(GPU-6): DFP-3: disconnected
-[3193045.363] (--) NVIDIA(GPU-6): DFP-3: Internal DisplayPort
-[3193045.363] (--) NVIDIA(GPU-6): DFP-3: 2670.0 MHz maximum pixel clock
-[3193045.363] (--) NVIDIA(GPU-6): 
-[3193045.363] (--) NVIDIA(GPU-6): DFP-4: disconnected
-[3193045.363] (--) NVIDIA(GPU-6): DFP-4: Internal TMDS
-[3193045.363] (--) NVIDIA(GPU-6): DFP-4: 165.0 MHz maximum pixel clock
-[3193045.363] (--) NVIDIA(GPU-6): 
-[3193045.363] (--) NVIDIA(GPU-6): DFP-5: disconnected
-[3193045.363] (--) NVIDIA(GPU-6): DFP-5: Internal DisplayPort
-[3193045.363] (--) NVIDIA(GPU-6): DFP-5: 2670.0 MHz maximum pixel clock
-[3193045.363] (--) NVIDIA(GPU-6): 
-[3193045.363] (--) NVIDIA(GPU-6): DFP-6: disconnected
-[3193045.363] (--) NVIDIA(GPU-6): DFP-6: Internal TMDS
-[3193045.363] (--) NVIDIA(GPU-6): DFP-6: 165.0 MHz maximum pixel clock
-[3193045.363] (--) NVIDIA(GPU-6): 
-[3193045.370] (II) NVIDIA(GPU-6): NVIDIA GPU NVIDIA GeForce RTX 4090 (AD102-A) at PCI:148@1:0:0
-[3193045.370] (II) NVIDIA(GPU-6):     (GPU-6)
-[3193045.370] (--) NVIDIA(GPU-6): Memory: 50319360 kBytes
-[3193045.370] (--) NVIDIA(GPU-6): VideoBIOS: 95.02.3c.c0.7b
-[3193045.370] (II) NVIDIA(GPU-6): Detected PCI Express Link width: 16X
-[3193045.373] (--) NVIDIA(0): Valid display device(s) on GPU-7 at PCI:190@1:0:0
-[3193045.373] (--) NVIDIA(0):     DFP-0
-[3193045.373] (--) NVIDIA(0):     DFP-1
-[3193045.373] (--) NVIDIA(0):     DFP-2
-[3193045.373] (--) NVIDIA(0):     DFP-3
-[3193045.373] (--) NVIDIA(0):     DFP-4
-[3193045.373] (--) NVIDIA(0):     DFP-5
-[3193045.373] (--) NVIDIA(0):     DFP-6
-[3193045.382] (--) NVIDIA(GPU-7): DFP-0: disconnected
-[3193045.382] (--) NVIDIA(GPU-7): DFP-0: Internal TMDS
-[3193045.382] (--) NVIDIA(GPU-7): DFP-0: 165.0 MHz maximum pixel clock
-[3193045.382] (--) NVIDIA(GPU-7): 
-[3193045.382] (--) NVIDIA(GPU-7): DFP-1: disconnected
-[3193045.382] (--) NVIDIA(GPU-7): DFP-1: Internal DisplayPort
-[3193045.382] (--) NVIDIA(GPU-7): DFP-1: 2670.0 MHz maximum pixel clock
-[3193045.382] (--) NVIDIA(GPU-7): 
-[3193045.382] (--) NVIDIA(GPU-7): DFP-2: disconnected
-[3193045.382] (--) NVIDIA(GPU-7): DFP-2: Internal TMDS
-[3193045.382] (--) NVIDIA(GPU-7): DFP-2: 165.0 MHz maximum pixel clock
-[3193045.382] (--) NVIDIA(GPU-7): 
-[3193045.382] (--) NVIDIA(GPU-7): DFP-3: disconnected
-[3193045.382] (--) NVIDIA(GPU-7): DFP-3: Internal DisplayPort
-[3193045.382] (--) NVIDIA(GPU-7): DFP-3: 2670.0 MHz maximum pixel clock
-[3193045.382] (--) NVIDIA(GPU-7): 
-[3193045.383] (--) NVIDIA(GPU-7): DFP-4: disconnected
-[3193045.383] (--) NVIDIA(GPU-7): DFP-4: Internal TMDS
-[3193045.383] (--) NVIDIA(GPU-7): DFP-4: 165.0 MHz maximum pixel clock
-[3193045.383] (--) NVIDIA(GPU-7): 
-[3193045.383] (--) NVIDIA(GPU-7): DFP-5: disconnected
-[3193045.383] (--) NVIDIA(GPU-7): DFP-5: Internal DisplayPort
-[3193045.383] (--) NVIDIA(GPU-7): DFP-5: 2670.0 MHz maximum pixel clock
-[3193045.383] (--) NVIDIA(GPU-7): 
-[3193045.383] (--) NVIDIA(GPU-7): DFP-6: disconnected
-[3193045.383] (--) NVIDIA(GPU-7): DFP-6: Internal TMDS
-[3193045.383] (--) NVIDIA(GPU-7): DFP-6: 165.0 MHz maximum pixel clock
-[3193045.383] (--) NVIDIA(GPU-7): 
-[3193045.390] (II) NVIDIA(GPU-7): NVIDIA GPU NVIDIA GeForce RTX 4090 (AD102-A) at PCI:190@1:0:0
-[3193045.390] (II) NVIDIA(GPU-7):     (GPU-7)
-[3193045.390] (--) NVIDIA(GPU-7): Memory: 50319360 kBytes
-[3193045.390] (--) NVIDIA(GPU-7): VideoBIOS: 95.02.3c.c0.7b
-[3193045.390] (II) NVIDIA(GPU-7): Detected PCI Express Link width: 16X
-[3193045.404] (II) NVIDIA: Reserving 24576.00 MB of virtual memory for indirect memory
-[3193045.404] (II) NVIDIA:     access.
-[3193045.415] (II) NVIDIA(0): ACPI: failed to connect to the ACPI event daemon; the daemon
-[3193045.415] (II) NVIDIA(0):     may not be running or the "AcpidSocketPath" X
-[3193045.415] (II) NVIDIA(0):     configuration option may not be set correctly.  When the
-[3193045.415] (II) NVIDIA(0):     ACPI event daemon is available, the NVIDIA X driver will
-[3193045.415] (II) NVIDIA(0):     try to use it to receive ACPI event notifications.  For
-[3193045.415] (II) NVIDIA(0):     details, please see the "ConnectToAcpid" and
-[3193045.415] (II) NVIDIA(0):     "AcpidSocketPath" X configuration options in Appendix B: X
-[3193045.415] (II) NVIDIA(0):     Config Options in the README.
-[3193045.437] (II) NVIDIA(0): Setting mode "NULL"
-[3193045.463] (==) NVIDIA(0): Disabling shared memory pixmaps
-[3193045.463] (==) NVIDIA(0): Backing store enabled
-[3193045.463] (==) NVIDIA(0): Silken mouse enabled
-[3193045.463] (==) NVIDIA(0): DPMS enabled
-[3193045.463] (II) Loading sub module "dri2"
-[3193045.463] (II) LoadModule: "dri2"
-[3193045.463] (II) Module "dri2" already built-in
-[3193045.463] (II) NVIDIA(0): [DRI2] Setup complete
-[3193045.463] (II) NVIDIA(0): [DRI2]   VDPAU driver: nvidia
-[3193045.463] (II) Initializing extension Generic Event Extension
-[3193045.464] (II) Initializing extension SHAPE
-[3193045.464] (II) Initializing extension MIT-SHM
-[3193045.464] (II) Initializing extension XInputExtension
-[3193045.464] (II) Initializing extension XTEST
-[3193045.464] (II) Initializing extension BIG-REQUESTS
-[3193045.464] (II) Initializing extension SYNC
-[3193045.464] (II) Initializing extension XKEYBOARD
-[3193045.464] (II) Initializing extension XC-MISC
-[3193045.464] (II) Initializing extension SECURITY
-[3193045.464] (II) Initializing extension XFIXES
-[3193045.464] (II) Initializing extension RENDER
-[3193045.464] (II) Initializing extension RANDR
-[3193045.465] (II) Initializing extension COMPOSITE
-[3193045.465] (II) Initializing extension DAMAGE
-[3193045.465] (II) Initializing extension MIT-SCREEN-SAVER
-[3193045.465] (II) Initializing extension DOUBLE-BUFFER
-[3193045.465] (II) Initializing extension RECORD
-[3193045.465] (II) Initializing extension DPMS
-[3193045.465] (II) Initializing extension Present
-[3193045.465] (II) Initializing extension DRI3
-[3193045.465] (II) Initializing extension X-Resource
-[3193045.465] (II) Initializing extension XVideo
-[3193045.465] (II) Initializing extension XVideo-MotionCompensation
-[3193045.465] (II) Initializing extension SELinux
-[3193045.465] (II) SELinux: Disabled on system
-[3193045.465] (II) Initializing extension GLX
-[3193045.465] (II) Initializing extension GLX
-[3193045.465] (II) Indirect GLX disabled.
-[3193045.465] (II) GLX: Another vendor is already registered for screen 0
-[3193045.465] (II) Initializing extension XFree86-VidModeExtension
-[3193045.465] (II) Initializing extension XFree86-DGA
-[3193045.465] (II) Initializing extension XFree86-DRI
-[3193045.465] (II) Initializing extension DRI2
-[3193045.466] (II) Initializing extension NV-GLX
-[3193045.466] (II) Initializing extension NV-CONTROL
-[3193045.582] (II) config/udev: Adding input device Power Button (/dev/input/event1)
-[3193045.582] (II) No input driver specified, ignoring this device.
-[3193045.582] (II) This device may have been added with another device file.
-[3193045.583] (II) config/udev: Adding input device Power Button (/dev/input/event0)
-[3193045.583] (II) No input driver specified, ignoring this device.
-[3193045.583] (II) This device may have been added with another device file.
-[3193045.583] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3 (/dev/input/event16)
-[3193045.583] (II) No input driver specified, ignoring this device.
-[3193045.583] (II) This device may have been added with another device file.
-[3193045.583] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=7 (/dev/input/event25)
-[3193045.583] (II) No input driver specified, ignoring this device.
-[3193045.583] (II) This device may have been added with another device file.
-[3193045.583] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=8 (/dev/input/event31)
-[3193045.583] (II) No input driver specified, ignoring this device.
-[3193045.583] (II) This device may have been added with another device file.
-[3193045.584] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=9 (/dev/input/event262)
-[3193045.584] (II) No input driver specified, ignoring this device.
-[3193045.584] (II) This device may have been added with another device file.
-[3193045.584] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=10 (/dev/input/event269)
-[3193045.584] (II) No input driver specified, ignoring this device.
-[3193045.584] (II) This device may have been added with another device file.
-[3193045.584] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=11 (/dev/input/event274)
-[3193045.584] (II) No input driver specified, ignoring this device.
-[3193045.584] (II) This device may have been added with another device file.
-[3193045.584] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=12 (/dev/input/event279)
-[3193045.584] (II) No input driver specified, ignoring this device.
-[3193045.584] (II) This device may have been added with another device file.
-[3193045.584] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3 (/dev/input/event12)
-[3193045.584] (II) No input driver specified, ignoring this device.
-[3193045.584] (II) This device may have been added with another device file.
-[3193045.585] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=7 (/dev/input/event15)
-[3193045.585] (II) No input driver specified, ignoring this device.
-[3193045.585] (II) This device may have been added with another device file.
-[3193045.585] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=8 (/dev/input/event20)
-[3193045.585] (II) No input driver specified, ignoring this device.
-[3193045.585] (II) This device may have been added with another device file.
-[3193045.585] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=9 (/dev/input/event28)
-[3193045.585] (II) No input driver specified, ignoring this device.
-[3193045.585] (II) This device may have been added with another device file.
-[3193045.585] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=10 (/dev/input/event260)
-[3193045.585] (II) No input driver specified, ignoring this device.
-[3193045.585] (II) This device may have been added with another device file.
-[3193045.585] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=11 (/dev/input/event267)
-[3193045.585] (II) No input driver specified, ignoring this device.
-[3193045.585] (II) This device may have been added with another device file.
-[3193045.585] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=12 (/dev/input/event272)
-[3193045.585] (II) No input driver specified, ignoring this device.
-[3193045.585] (II) This device may have been added with another device file.
-[3193045.586] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3 (/dev/input/event9)
-[3193045.586] (II) No input driver specified, ignoring this device.
-[3193045.586] (II) This device may have been added with another device file.
-[3193045.586] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=7 (/dev/input/event10)
-[3193045.586] (II) No input driver specified, ignoring this device.
-[3193045.586] (II) This device may have been added with another device file.
-[3193045.586] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=8 (/dev/input/event11)
-[3193045.586] (II) No input driver specified, ignoring this device.
-[3193045.586] (II) This device may have been added with another device file.
-[3193045.586] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=9 (/dev/input/event19)
-[3193045.586] (II) No input driver specified, ignoring this device.
-[3193045.586] (II) This device may have been added with another device file.
-[3193045.586] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=10 (/dev/input/event26)
-[3193045.586] (II) No input driver specified, ignoring this device.
-[3193045.586] (II) This device may have been added with another device file.
-[3193045.586] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=11 (/dev/input/event258)
-[3193045.586] (II) No input driver specified, ignoring this device.
-[3193045.586] (II) This device may have been added with another device file.
-[3193045.587] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=12 (/dev/input/event266)
-[3193045.587] (II) No input driver specified, ignoring this device.
-[3193045.587] (II) This device may have been added with another device file.
-[3193045.587] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3 (/dev/input/event13)
-[3193045.587] (II) No input driver specified, ignoring this device.
-[3193045.587] (II) This device may have been added with another device file.
-[3193045.587] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=7 (/dev/input/event14)
-[3193045.587] (II) No input driver specified, ignoring this device.
-[3193045.587] (II) This device may have been added with another device file.
-[3193045.587] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=8 (/dev/input/event17)
-[3193045.587] (II) No input driver specified, ignoring this device.
-[3193045.587] (II) This device may have been added with another device file.
-[3193045.587] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=9 (/dev/input/event18)
-[3193045.587] (II) No input driver specified, ignoring this device.
-[3193045.587] (II) This device may have been added with another device file.
-[3193045.587] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=10 (/dev/input/event24)
-[3193045.587] (II) No input driver specified, ignoring this device.
-[3193045.587] (II) This device may have been added with another device file.
-[3193045.588] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=11 (/dev/input/event257)
-[3193045.588] (II) No input driver specified, ignoring this device.
-[3193045.588] (II) This device may have been added with another device file.
-[3193045.588] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=12 (/dev/input/event263)
-[3193045.588] (II) No input driver specified, ignoring this device.
-[3193045.588] (II) This device may have been added with another device file.
-[3193045.588] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3 (/dev/input/event27)
-[3193045.588] (II) No input driver specified, ignoring this device.
-[3193045.588] (II) This device may have been added with another device file.
-[3193045.588] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=7 (/dev/input/event256)
-[3193045.588] (II) No input driver specified, ignoring this device.
-[3193045.588] (II) This device may have been added with another device file.
-[3193045.588] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=8 (/dev/input/event264)
-[3193045.588] (II) No input driver specified, ignoring this device.
-[3193045.588] (II) This device may have been added with another device file.
-[3193045.589] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=9 (/dev/input/event270)
-[3193045.589] (II) No input driver specified, ignoring this device.
-[3193045.589] (II) This device may have been added with another device file.
-[3193045.589] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=10 (/dev/input/event275)
-[3193045.589] (II) No input driver specified, ignoring this device.
-[3193045.589] (II) This device may have been added with another device file.
-[3193045.589] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=11 (/dev/input/event280)
-[3193045.589] (II) No input driver specified, ignoring this device.
-[3193045.589] (II) This device may have been added with another device file.
-[3193045.589] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=12 (/dev/input/event281)
-[3193045.589] (II) No input driver specified, ignoring this device.
-[3193045.589] (II) This device may have been added with another device file.
-[3193045.589] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3 (/dev/input/event22)
-[3193045.589] (II) No input driver specified, ignoring this device.
-[3193045.589] (II) This device may have been added with another device file.
-[3193045.590] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=7 (/dev/input/event23)
-[3193045.590] (II) No input driver specified, ignoring this device.
-[3193045.590] (II) This device may have been added with another device file.
-[3193045.590] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=8 (/dev/input/event30)
-[3193045.590] (II) No input driver specified, ignoring this device.
-[3193045.590] (II) This device may have been added with another device file.
-[3193045.590] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=9 (/dev/input/event261)
-[3193045.590] (II) No input driver specified, ignoring this device.
-[3193045.590] (II) This device may have been added with another device file.
-[3193045.590] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=10 (/dev/input/event268)
-[3193045.590] (II) No input driver specified, ignoring this device.
-[3193045.590] (II) This device may have been added with another device file.
-[3193045.590] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=11 (/dev/input/event273)
-[3193045.590] (II) No input driver specified, ignoring this device.
-[3193045.590] (II) This device may have been added with another device file.
-[3193045.590] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=12 (/dev/input/event278)
-[3193045.590] (II) No input driver specified, ignoring this device.
-[3193045.590] (II) This device may have been added with another device file.
-[3193045.591] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=7 (/dev/input/event3)
-[3193045.591] (II) No input driver specified, ignoring this device.
-[3193045.591] (II) This device may have been added with another device file.
-[3193045.591] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=8 (/dev/input/event4)
-[3193045.591] (II) No input driver specified, ignoring this device.
-[3193045.591] (II) This device may have been added with another device file.
-[3193045.591] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=9 (/dev/input/event5)
-[3193045.591] (II) No input driver specified, ignoring this device.
-[3193045.591] (II) This device may have been added with another device file.
-[3193045.591] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=10 (/dev/input/event6)
-[3193045.591] (II) No input driver specified, ignoring this device.
-[3193045.591] (II) This device may have been added with another device file.
-[3193045.591] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=11 (/dev/input/event7)
-[3193045.591] (II) No input driver specified, ignoring this device.
-[3193045.591] (II) This device may have been added with another device file.
-[3193045.591] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=12 (/dev/input/event8)
-[3193045.591] (II) No input driver specified, ignoring this device.
-[3193045.591] (II) This device may have been added with another device file.
-[3193045.592] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3 (/dev/input/event2)
-[3193045.592] (II) No input driver specified, ignoring this device.
-[3193045.592] (II) This device may have been added with another device file.
-[3193045.592] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3 (/dev/input/event21)
-[3193045.592] (II) No input driver specified, ignoring this device.
-[3193045.592] (II) This device may have been added with another device file.
-[3193045.592] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=7 (/dev/input/event29)
-[3193045.592] (II) No input driver specified, ignoring this device.
-[3193045.592] (II) This device may have been added with another device file.
-[3193045.592] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=8 (/dev/input/event259)
-[3193045.592] (II) No input driver specified, ignoring this device.
-[3193045.592] (II) This device may have been added with another device file.
-[3193045.592] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=9 (/dev/input/event265)
-[3193045.592] (II) No input driver specified, ignoring this device.
-[3193045.592] (II) This device may have been added with another device file.
-[3193045.593] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=10 (/dev/input/event271)
-[3193045.593] (II) No input driver specified, ignoring this device.
-[3193045.593] (II) This device may have been added with another device file.
-[3193045.593] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=11 (/dev/input/event276)
-[3193045.593] (II) No input driver specified, ignoring this device.
-[3193045.593] (II) This device may have been added with another device file.
-[3193045.593] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=12 (/dev/input/event277)
-[3193045.593] (II) No input driver specified, ignoring this device.
-[3193045.593] (II) This device may have been added with another device file.
-[3195011.522] (II) NVIDIA(GPU-0): Deleting GPU-0
-[3195011.522] (II) NVIDIA(GPU-1): Renaming GPU-1 to GPU-0
-[3195011.522] (II) NVIDIA(GPU-2): Renaming GPU-2 to GPU-1
-[3195011.522] (II) NVIDIA(GPU-3): Renaming GPU-3 to GPU-2
-[3195011.522] (II) NVIDIA(GPU-4): Renaming GPU-4 to GPU-3
-[3195011.522] (II) NVIDIA(GPU-5): Renaming GPU-5 to GPU-4
-[3195011.522] (II) NVIDIA(GPU-6): Renaming GPU-6 to GPU-5
-[3195011.522] (II) NVIDIA(GPU-7): Renaming GPU-7 to GPU-6
-[3195011.522] (II) NVIDIA(GPU-0): Deleting GPU-0
-[3195011.522] (II) NVIDIA(GPU-1): Renaming GPU-1 to GPU-0
-[3195011.522] (II) NVIDIA(GPU-2): Renaming GPU-2 to GPU-1
-[3195011.522] (II) NVIDIA(GPU-3): Renaming GPU-3 to GPU-2
-[3195011.522] (II) NVIDIA(GPU-4): Renaming GPU-4 to GPU-3
-[3195011.522] (II) NVIDIA(GPU-5): Renaming GPU-5 to GPU-4
-[3195011.522] (II) NVIDIA(GPU-6): Renaming GPU-6 to GPU-5
-[3195011.522] (II) NVIDIA(GPU-0): Deleting GPU-0
-[3195011.522] (II) NVIDIA(GPU-1): Renaming GPU-1 to GPU-0
-[3195011.522] (II) NVIDIA(GPU-2): Renaming GPU-2 to GPU-1
-[3195011.522] (II) NVIDIA(GPU-3): Renaming GPU-3 to GPU-2
-[3195011.522] (II) NVIDIA(GPU-4): Renaming GPU-4 to GPU-3
-[3195011.522] (II) NVIDIA(GPU-5): Renaming GPU-5 to GPU-4
-[3195011.522] (II) NVIDIA(GPU-0): Deleting GPU-0
-[3195011.522] (II) NVIDIA(GPU-1): Renaming GPU-1 to GPU-0
-[3195011.522] (II) NVIDIA(GPU-2): Renaming GPU-2 to GPU-1
-[3195011.522] (II) NVIDIA(GPU-3): Renaming GPU-3 to GPU-2
-[3195011.522] (II) NVIDIA(GPU-4): Renaming GPU-4 to GPU-3
-[3195011.522] (II) NVIDIA(GPU-0): Deleting GPU-0
-[3195011.522] (II) NVIDIA(GPU-1): Renaming GPU-1 to GPU-0
-[3195011.522] (II) NVIDIA(GPU-2): Renaming GPU-2 to GPU-1
-[3195011.522] (II) NVIDIA(GPU-3): Renaming GPU-3 to GPU-2
-[3195011.522] (II) NVIDIA(GPU-0): Deleting GPU-0
-[3195011.522] (II) NVIDIA(GPU-1): Renaming GPU-1 to GPU-0
-[3195011.522] (II) NVIDIA(GPU-2): Renaming GPU-2 to GPU-1
-[3195011.522] (II) NVIDIA(GPU-0): Deleting GPU-0
-[3195011.522] (II) NVIDIA(GPU-1): Renaming GPU-1 to GPU-0
-[3195011.522] (II) NVIDIA(GPU-0): Deleting GPU-0
-[3195011.536] (II) Server terminated successfully (0). Closing log file.
+[3195249.485] (II) systemd-logind: logind integration requires -keeptty and -keeptty was not provided, disabling logind integration
+[3195249.487] (II) xfree86: Adding drm device (/dev/dri/card0)
+[3195249.487] (II) Platform probe for /sys/devices/pci0000:00/0000:00:0e.0/0000:01:00.0/0000:02:00.0/drm/card0
+[3195249.487] (II) xfree86: Adding drm device (/dev/dri/card1)
+[3195249.487] (II) Platform probe for /sys/devices/pci0000:15/0000:15:01.0/0000:16:00.0/drm/card1
+[3195249.487] (II) xfree86: Adding drm device (/dev/dri/card2)
+[3195249.487] (II) Platform probe for /sys/devices/pci0000:69/0000:69:01.0/0000:6a:00.0/drm/card2
+[3195249.487] (II) xfree86: Adding drm device (/dev/dri/card3)
+[3195249.487] (II) Platform probe for /sys/devices/pci0000:93/0000:93:01.0/0000:94:00.0/drm/card3
+[3195249.487] (II) xfree86: Adding drm device (/dev/dri/card4)
+[3195249.487] (II) Platform probe for /sys/devices/pci0000:bd/0000:bd:01.0/0000:be:00.0/drm/card4
+[3195249.487] (II) xfree86: Adding drm device (/dev/dri/card5)
+[3195249.487] (II) Platform probe for /sys/devices/pci0001:15/0001:15:01.0/0001:16:00.0/drm/card5
+[3195249.488] (II) xfree86: Adding drm device (/dev/dri/card6)
+[3195249.488] (II) Platform probe for /sys/devices/pci0001:69/0001:69:01.0/0001:6a:00.0/drm/card6
+[3195249.488] (II) xfree86: Adding drm device (/dev/dri/card7)
+[3195249.488] (II) Platform probe for /sys/devices/pci0001:93/0001:93:01.0/0001:94:00.0/drm/card7
+[3195249.488] (II) xfree86: Adding drm device (/dev/dri/card8)
+[3195249.488] (II) Platform probe for /sys/devices/pci0001:bd/0001:bd:01.0/0001:be:00.0/drm/card8
+[3195249.500] (**) OutputClass "nvidia" ModulePath extended to "/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/xorg/modules"
+[3195249.500] (**) OutputClass "nvidia" ModulePath extended to "/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/xorg/modules"
+[3195249.500] (**) OutputClass "nvidia" ModulePath extended to "/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/xorg/modules"
+[3195249.500] (**) OutputClass "nvidia" ModulePath extended to "/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/xorg/modules"
+[3195249.500] (**) OutputClass "nvidia" ModulePath extended to "/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/xorg/modules"
+[3195249.500] (**) OutputClass "nvidia" ModulePath extended to "/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/xorg/modules"
+[3195249.500] (**) OutputClass "nvidia" ModulePath extended to "/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/xorg/modules"
+[3195249.500] (**) OutputClass "nvidia" ModulePath extended to "/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/x86_64-linux-gnu/nvidia/xorg,/usr/lib/xorg/modules"
+[3195249.512] (--) PCI:*(2@0:0:0) 1a03:2000:1a03:2000 rev 82, Mem @ 0xa4000000/16777216, 0xa5000000/262144, I/O @ 0x00002000/128
+[3195249.512] (--) PCI: (22@0:0:0) 10de:2684:10de:16f3 rev 161, Mem @ 0xac000000/16777216, 0x21ffe0000000/268435456, 0x21fff0000000/33554432, I/O @ 0x00005000/128, BIOS @ 0x????????/524288
+[3195249.512] (--) PCI: (106@0:0:0) 10de:2684:10de:16f3 rev 161, Mem @ 0xbd000000/16777216, 0x23ffe0000000/268435456, 0x23fff0000000/33554432, I/O @ 0x00007000/128, BIOS @ 0x????????/524288
+[3195249.512] (--) PCI: (148@0:0:0) 10de:2684:10de:16f3 rev 161, Mem @ 0xc5000000/16777216, 0x24ffe0000000/268435456, 0x24fff0000000/33554432, I/O @ 0x00008000/128, BIOS @ 0x????????/524288
+[3195249.512] (--) PCI: (190@0:0:0) 10de:2684:10de:16f3 rev 161, Mem @ 0xcd000000/16777216, 0x25ffe0000000/268435456, 0x25fff0000000/33554432, I/O @ 0x00009000/128, BIOS @ 0x????????/524288
+[3195249.512] (--) PCI: (22@1:0:0) 10de:2684:10de:16f3 rev 161, Mem @ 0xdd000000/16777216, 0x2bffe0000000/268435456, 0x2bfff0000000/33554432, I/O @ 0x0000b000/128, BIOS @ 0x????????/524288
+[3195249.512] (--) PCI: (106@1:0:0) 10de:2684:10de:16f3 rev 161, Mem @ 0xea000000/16777216, 0x2dffe0000000/268435456, 0x2dfff0000000/33554432, I/O @ 0x0000d000/128, BIOS @ 0x????????/524288
+[3195249.512] (--) PCI: (148@1:0:0) 10de:2684:10de:16f3 rev 161, Mem @ 0xf1000000/16777216, 0x2effe0000000/268435456, 0x2efff0000000/33554432, I/O @ 0x0000e000/128, BIOS @ 0x????????/524288
+[3195249.512] (--) PCI: (190@1:0:0) 10de:2684:10de:16f3 rev 161, Mem @ 0xf8000000/16777216, 0x2fffe0000000/268435456, 0x2ffff0000000/33554432, I/O @ 0x0000f000/128, BIOS @ 0x????????/524288
+[3195249.512] (II) LoadModule: "glx"
+[3195249.513] (II) Loading /usr/lib/xorg/modules/extensions/libglx.so
+[3195249.513] (II) Module glx: vendor="X.Org Foundation"
+[3195249.513] 	compiled for 1.21.1.4, module version = 1.0.0
+[3195249.513] 	ABI class: X.Org Server Extension, version 10.0
+[3195249.513] (II) LoadModule: "nvidia"
+[3195249.513] (II) Loading /usr/lib/x86_64-linux-gnu/nvidia/xorg/nvidia_drv.so
+[3195249.513] (II) Module nvidia: vendor="NVIDIA Corporation"
+[3195249.513] 	compiled for 1.6.99.901, module version = 1.0.0
+[3195249.513] 	Module class: X.Org Video Driver
+[3195249.513] (II) NVIDIA dlloader X Driver  570.144  Thu Apr 10 20:05:34 UTC 2025
+[3195249.513] (II) NVIDIA Unified Driver for all Supported NVIDIA GPUs
+[3195249.515] (II) Loading sub module "fb"
+[3195249.515] (II) LoadModule: "fb"
+[3195249.515] (II) Module "fb" already built-in
+[3195249.515] (II) Loading sub module "wfb"
+[3195249.515] (II) LoadModule: "wfb"
+[3195249.515] (II) Loading /usr/lib/xorg/modules/libwfb.so
+[3195249.516] (II) Module wfb: vendor="X.Org Foundation"
+[3195249.516] 	compiled for 1.21.1.4, module version = 1.0.0
+[3195249.516] 	ABI class: X.Org ANSI C Emulation, version 0.4
+[3195249.516] (**) NVIDIA(0): Depth 24, (--) framebuffer bpp 32
+[3195249.516] (==) NVIDIA(0): RGB weight 888
+[3195249.516] (==) NVIDIA(0): Default visual is TrueColor
+[3195249.516] (==) NVIDIA(0): Using gamma correction (1.0, 1.0, 1.0)
+[3195249.517] (II) Applying OutputClass "nvidia" options to /dev/dri/card1
+[3195249.517] (**) NVIDIA(0): Option "AllowEmptyInitialConfiguration" "True"
+[3195249.517] (**) NVIDIA(0): Enabling 2D acceleration
+[3195249.517] (II) Loading sub module "glxserver_nvidia"
+[3195249.517] (II) LoadModule: "glxserver_nvidia"
+[3195249.517] (II) Loading /usr/lib/x86_64-linux-gnu/nvidia/xorg/libglxserver_nvidia.so
+[3195249.533] (II) Module glxserver_nvidia: vendor="NVIDIA Corporation"
+[3195249.533] 	compiled for 1.6.99.901, module version = 1.0.0
+[3195249.533] 	Module class: X.Org Server Extension
+[3195249.533] (II) NVIDIA GLX Module  570.144  Thu Apr 10 20:06:53 UTC 2025
+[3195249.533] (II) NVIDIA: The X server supports PRIME Render Offload.
+[3195249.536] (--) NVIDIA(0): Valid display device(s) on GPU-0 at PCI:22:0:0
+[3195249.536] (--) NVIDIA(0):     DFP-0
+[3195249.536] (--) NVIDIA(0):     DFP-1
+[3195249.536] (--) NVIDIA(0):     DFP-2
+[3195249.536] (--) NVIDIA(0):     DFP-3
+[3195249.536] (--) NVIDIA(0):     DFP-4
+[3195249.536] (--) NVIDIA(0):     DFP-5
+[3195249.536] (--) NVIDIA(0):     DFP-6
+[3195249.545] (II) NVIDIA(0): NVIDIA GPU NVIDIA GeForce RTX 4090 (AD102-A) at PCI:22:0:0
+[3195249.545] (II) NVIDIA(0):     (GPU-0)
+[3195249.545] (--) NVIDIA(0): Memory: 50319360 kBytes
+[3195249.545] (--) NVIDIA(0): VideoBIOS: 95.02.3c.c0.7b
+[3195249.545] (II) NVIDIA(0): Detected PCI Express Link width: 16X
+[3195249.546] (--) NVIDIA(GPU-0): DFP-0: disconnected
+[3195249.546] (--) NVIDIA(GPU-0): DFP-0: Internal TMDS
+[3195249.546] (--) NVIDIA(GPU-0): DFP-0: 165.0 MHz maximum pixel clock
+[3195249.546] (--) NVIDIA(GPU-0): 
+[3195249.546] (--) NVIDIA(GPU-0): DFP-1: disconnected
+[3195249.546] (--) NVIDIA(GPU-0): DFP-1: Internal DisplayPort
+[3195249.546] (--) NVIDIA(GPU-0): DFP-1: 2670.0 MHz maximum pixel clock
+[3195249.546] (--) NVIDIA(GPU-0): 
+[3195249.546] (--) NVIDIA(GPU-0): DFP-2: disconnected
+[3195249.546] (--) NVIDIA(GPU-0): DFP-2: Internal TMDS
+[3195249.546] (--) NVIDIA(GPU-0): DFP-2: 165.0 MHz maximum pixel clock
+[3195249.546] (--) NVIDIA(GPU-0): 
+[3195249.547] (--) NVIDIA(GPU-0): DFP-3: disconnected
+[3195249.547] (--) NVIDIA(GPU-0): DFP-3: Internal DisplayPort
+[3195249.547] (--) NVIDIA(GPU-0): DFP-3: 2670.0 MHz maximum pixel clock
+[3195249.547] (--) NVIDIA(GPU-0): 
+[3195249.547] (--) NVIDIA(GPU-0): DFP-4: disconnected
+[3195249.547] (--) NVIDIA(GPU-0): DFP-4: Internal TMDS
+[3195249.547] (--) NVIDIA(GPU-0): DFP-4: 165.0 MHz maximum pixel clock
+[3195249.547] (--) NVIDIA(GPU-0): 
+[3195249.547] (--) NVIDIA(GPU-0): DFP-5: disconnected
+[3195249.547] (--) NVIDIA(GPU-0): DFP-5: Internal DisplayPort
+[3195249.547] (--) NVIDIA(GPU-0): DFP-5: 2670.0 MHz maximum pixel clock
+[3195249.547] (--) NVIDIA(GPU-0): 
+[3195249.547] (--) NVIDIA(GPU-0): DFP-6: disconnected
+[3195249.547] (--) NVIDIA(GPU-0): DFP-6: Internal TMDS
+[3195249.547] (--) NVIDIA(GPU-0): DFP-6: 165.0 MHz maximum pixel clock
+[3195249.547] (--) NVIDIA(GPU-0): 
+[3195249.547] (==) NVIDIA(0): 
+[3195249.547] (==) NVIDIA(0): No modes were requested; the default mode "nvidia-auto-select"
+[3195249.547] (==) NVIDIA(0):     will be used as the requested mode.
+[3195249.547] (==) NVIDIA(0): 
+[3195249.547] (--) NVIDIA(0): No enabled display devices found; starting anyway because
+[3195249.547] (--) NVIDIA(0):     AllowEmptyInitialConfiguration is enabled
+[3195249.552] (II) NVIDIA(0): Validated MetaModes:
+[3195249.552] (II) NVIDIA(0):     "NULL"
+[3195249.552] (**) NVIDIA(0): Virtual screen size configured to be 1024 x 768
+[3195249.552] (WW) NVIDIA(0): Unable to get display device for DPI computation.
+[3195249.552] (==) NVIDIA(0): DPI set to (75, 75); computed from built-in default
+[3195249.555] (--) NVIDIA(0): Valid display device(s) on GPU-1 at PCI:106:0:0
+[3195249.555] (--) NVIDIA(0):     DFP-0
+[3195249.555] (--) NVIDIA(0):     DFP-1
+[3195249.555] (--) NVIDIA(0):     DFP-2
+[3195249.555] (--) NVIDIA(0):     DFP-3
+[3195249.555] (--) NVIDIA(0):     DFP-4
+[3195249.555] (--) NVIDIA(0):     DFP-5
+[3195249.555] (--) NVIDIA(0):     DFP-6
+[3195249.564] (--) NVIDIA(GPU-1): DFP-0: disconnected
+[3195249.564] (--) NVIDIA(GPU-1): DFP-0: Internal TMDS
+[3195249.564] (--) NVIDIA(GPU-1): DFP-0: 165.0 MHz maximum pixel clock
+[3195249.564] (--) NVIDIA(GPU-1): 
+[3195249.564] (--) NVIDIA(GPU-1): DFP-1: disconnected
+[3195249.564] (--) NVIDIA(GPU-1): DFP-1: Internal DisplayPort
+[3195249.564] (--) NVIDIA(GPU-1): DFP-1: 2670.0 MHz maximum pixel clock
+[3195249.564] (--) NVIDIA(GPU-1): 
+[3195249.564] (--) NVIDIA(GPU-1): DFP-2: disconnected
+[3195249.564] (--) NVIDIA(GPU-1): DFP-2: Internal TMDS
+[3195249.564] (--) NVIDIA(GPU-1): DFP-2: 165.0 MHz maximum pixel clock
+[3195249.564] (--) NVIDIA(GPU-1): 
+[3195249.564] (--) NVIDIA(GPU-1): DFP-3: disconnected
+[3195249.564] (--) NVIDIA(GPU-1): DFP-3: Internal DisplayPort
+[3195249.564] (--) NVIDIA(GPU-1): DFP-3: 2670.0 MHz maximum pixel clock
+[3195249.564] (--) NVIDIA(GPU-1): 
+[3195249.565] (--) NVIDIA(GPU-1): DFP-4: disconnected
+[3195249.565] (--) NVIDIA(GPU-1): DFP-4: Internal TMDS
+[3195249.565] (--) NVIDIA(GPU-1): DFP-4: 165.0 MHz maximum pixel clock
+[3195249.565] (--) NVIDIA(GPU-1): 
+[3195249.565] (--) NVIDIA(GPU-1): DFP-5: disconnected
+[3195249.565] (--) NVIDIA(GPU-1): DFP-5: Internal DisplayPort
+[3195249.565] (--) NVIDIA(GPU-1): DFP-5: 2670.0 MHz maximum pixel clock
+[3195249.565] (--) NVIDIA(GPU-1): 
+[3195249.565] (--) NVIDIA(GPU-1): DFP-6: disconnected
+[3195249.565] (--) NVIDIA(GPU-1): DFP-6: Internal TMDS
+[3195249.565] (--) NVIDIA(GPU-1): DFP-6: 165.0 MHz maximum pixel clock
+[3195249.565] (--) NVIDIA(GPU-1): 
+[3195249.571] (II) NVIDIA(GPU-1): NVIDIA GPU NVIDIA GeForce RTX 4090 (AD102-A) at PCI:106:0:0
+[3195249.571] (II) NVIDIA(GPU-1):     (GPU-1)
+[3195249.571] (--) NVIDIA(GPU-1): Memory: 50319360 kBytes
+[3195249.571] (--) NVIDIA(GPU-1): VideoBIOS: 95.02.3c.c0.7b
+[3195249.571] (II) NVIDIA(GPU-1): Detected PCI Express Link width: 16X
+[3195249.574] (--) NVIDIA(0): Valid display device(s) on GPU-2 at PCI:148:0:0
+[3195249.574] (--) NVIDIA(0):     DFP-0
+[3195249.574] (--) NVIDIA(0):     DFP-1
+[3195249.574] (--) NVIDIA(0):     DFP-2
+[3195249.574] (--) NVIDIA(0):     DFP-3
+[3195249.574] (--) NVIDIA(0):     DFP-4
+[3195249.574] (--) NVIDIA(0):     DFP-5
+[3195249.574] (--) NVIDIA(0):     DFP-6
+[3195249.583] (--) NVIDIA(GPU-2): DFP-0: disconnected
+[3195249.583] (--) NVIDIA(GPU-2): DFP-0: Internal TMDS
+[3195249.583] (--) NVIDIA(GPU-2): DFP-0: 165.0 MHz maximum pixel clock
+[3195249.583] (--) NVIDIA(GPU-2): 
+[3195249.583] (--) NVIDIA(GPU-2): DFP-1: disconnected
+[3195249.583] (--) NVIDIA(GPU-2): DFP-1: Internal DisplayPort
+[3195249.583] (--) NVIDIA(GPU-2): DFP-1: 2670.0 MHz maximum pixel clock
+[3195249.583] (--) NVIDIA(GPU-2): 
+[3195249.583] (--) NVIDIA(GPU-2): DFP-2: disconnected
+[3195249.583] (--) NVIDIA(GPU-2): DFP-2: Internal TMDS
+[3195249.583] (--) NVIDIA(GPU-2): DFP-2: 165.0 MHz maximum pixel clock
+[3195249.583] (--) NVIDIA(GPU-2): 
+[3195249.583] (--) NVIDIA(GPU-2): DFP-3: disconnected
+[3195249.583] (--) NVIDIA(GPU-2): DFP-3: Internal DisplayPort
+[3195249.583] (--) NVIDIA(GPU-2): DFP-3: 2670.0 MHz maximum pixel clock
+[3195249.583] (--) NVIDIA(GPU-2): 
+[3195249.584] (--) NVIDIA(GPU-2): DFP-4: disconnected
+[3195249.584] (--) NVIDIA(GPU-2): DFP-4: Internal TMDS
+[3195249.584] (--) NVIDIA(GPU-2): DFP-4: 165.0 MHz maximum pixel clock
+[3195249.584] (--) NVIDIA(GPU-2): 
+[3195249.584] (--) NVIDIA(GPU-2): DFP-5: disconnected
+[3195249.584] (--) NVIDIA(GPU-2): DFP-5: Internal DisplayPort
+[3195249.584] (--) NVIDIA(GPU-2): DFP-5: 2670.0 MHz maximum pixel clock
+[3195249.584] (--) NVIDIA(GPU-2): 
+[3195249.584] (--) NVIDIA(GPU-2): DFP-6: disconnected
+[3195249.584] (--) NVIDIA(GPU-2): DFP-6: Internal TMDS
+[3195249.584] (--) NVIDIA(GPU-2): DFP-6: 165.0 MHz maximum pixel clock
+[3195249.584] (--) NVIDIA(GPU-2): 
+[3195249.590] (II) NVIDIA(GPU-2): NVIDIA GPU NVIDIA GeForce RTX 4090 (AD102-A) at PCI:148:0:0
+[3195249.590] (II) NVIDIA(GPU-2):     (GPU-2)
+[3195249.590] (--) NVIDIA(GPU-2): Memory: 50319360 kBytes
+[3195249.590] (--) NVIDIA(GPU-2): VideoBIOS: 95.02.3c.00.02
+[3195249.590] (II) NVIDIA(GPU-2): Detected PCI Express Link width: 16X
+[3195249.593] (--) NVIDIA(0): Valid display device(s) on GPU-3 at PCI:190:0:0
+[3195249.593] (--) NVIDIA(0):     DFP-0
+[3195249.593] (--) NVIDIA(0):     DFP-1
+[3195249.593] (--) NVIDIA(0):     DFP-2
+[3195249.593] (--) NVIDIA(0):     DFP-3
+[3195249.593] (--) NVIDIA(0):     DFP-4
+[3195249.593] (--) NVIDIA(0):     DFP-5
+[3195249.593] (--) NVIDIA(0):     DFP-6
+[3195249.602] (--) NVIDIA(GPU-3): DFP-0: disconnected
+[3195249.602] (--) NVIDIA(GPU-3): DFP-0: Internal TMDS
+[3195249.602] (--) NVIDIA(GPU-3): DFP-0: 165.0 MHz maximum pixel clock
+[3195249.602] (--) NVIDIA(GPU-3): 
+[3195249.602] (--) NVIDIA(GPU-3): DFP-1: disconnected
+[3195249.602] (--) NVIDIA(GPU-3): DFP-1: Internal DisplayPort
+[3195249.602] (--) NVIDIA(GPU-3): DFP-1: 2670.0 MHz maximum pixel clock
+[3195249.602] (--) NVIDIA(GPU-3): 
+[3195249.602] (--) NVIDIA(GPU-3): DFP-2: disconnected
+[3195249.602] (--) NVIDIA(GPU-3): DFP-2: Internal TMDS
+[3195249.602] (--) NVIDIA(GPU-3): DFP-2: 165.0 MHz maximum pixel clock
+[3195249.602] (--) NVIDIA(GPU-3): 
+[3195249.602] (--) NVIDIA(GPU-3): DFP-3: disconnected
+[3195249.602] (--) NVIDIA(GPU-3): DFP-3: Internal DisplayPort
+[3195249.602] (--) NVIDIA(GPU-3): DFP-3: 2670.0 MHz maximum pixel clock
+[3195249.602] (--) NVIDIA(GPU-3): 
+[3195249.603] (--) NVIDIA(GPU-3): DFP-4: disconnected
+[3195249.603] (--) NVIDIA(GPU-3): DFP-4: Internal TMDS
+[3195249.603] (--) NVIDIA(GPU-3): DFP-4: 165.0 MHz maximum pixel clock
+[3195249.603] (--) NVIDIA(GPU-3): 
+[3195249.603] (--) NVIDIA(GPU-3): DFP-5: disconnected
+[3195249.603] (--) NVIDIA(GPU-3): DFP-5: Internal DisplayPort
+[3195249.603] (--) NVIDIA(GPU-3): DFP-5: 2670.0 MHz maximum pixel clock
+[3195249.603] (--) NVIDIA(GPU-3): 
+[3195249.603] (--) NVIDIA(GPU-3): DFP-6: disconnected
+[3195249.603] (--) NVIDIA(GPU-3): DFP-6: Internal TMDS
+[3195249.603] (--) NVIDIA(GPU-3): DFP-6: 165.0 MHz maximum pixel clock
+[3195249.603] (--) NVIDIA(GPU-3): 
+[3195249.609] (II) NVIDIA(GPU-3): NVIDIA GPU NVIDIA GeForce RTX 4090 (AD102-A) at PCI:190:0:0
+[3195249.609] (II) NVIDIA(GPU-3):     (GPU-3)
+[3195249.609] (--) NVIDIA(GPU-3): Memory: 50319360 kBytes
+[3195249.609] (--) NVIDIA(GPU-3): VideoBIOS: 95.02.3c.c0.7b
+[3195249.609] (II) NVIDIA(GPU-3): Detected PCI Express Link width: 16X
+[3195249.611] (--) NVIDIA(0): Valid display device(s) on GPU-4 at PCI:22@1:0:0
+[3195249.611] (--) NVIDIA(0):     DFP-0
+[3195249.611] (--) NVIDIA(0):     DFP-1
+[3195249.611] (--) NVIDIA(0):     DFP-2
+[3195249.611] (--) NVIDIA(0):     DFP-3
+[3195249.611] (--) NVIDIA(0):     DFP-4
+[3195249.611] (--) NVIDIA(0):     DFP-5
+[3195249.611] (--) NVIDIA(0):     DFP-6
+[3195249.620] (--) NVIDIA(GPU-4): DFP-0: disconnected
+[3195249.620] (--) NVIDIA(GPU-4): DFP-0: Internal TMDS
+[3195249.620] (--) NVIDIA(GPU-4): DFP-0: 165.0 MHz maximum pixel clock
+[3195249.620] (--) NVIDIA(GPU-4): 
+[3195249.620] (--) NVIDIA(GPU-4): DFP-1: disconnected
+[3195249.620] (--) NVIDIA(GPU-4): DFP-1: Internal DisplayPort
+[3195249.620] (--) NVIDIA(GPU-4): DFP-1: 2670.0 MHz maximum pixel clock
+[3195249.620] (--) NVIDIA(GPU-4): 
+[3195249.621] (--) NVIDIA(GPU-4): DFP-2: disconnected
+[3195249.621] (--) NVIDIA(GPU-4): DFP-2: Internal TMDS
+[3195249.621] (--) NVIDIA(GPU-4): DFP-2: 165.0 MHz maximum pixel clock
+[3195249.621] (--) NVIDIA(GPU-4): 
+[3195249.621] (--) NVIDIA(GPU-4): DFP-3: disconnected
+[3195249.621] (--) NVIDIA(GPU-4): DFP-3: Internal DisplayPort
+[3195249.621] (--) NVIDIA(GPU-4): DFP-3: 2670.0 MHz maximum pixel clock
+[3195249.621] (--) NVIDIA(GPU-4): 
+[3195249.621] (--) NVIDIA(GPU-4): DFP-4: disconnected
+[3195249.621] (--) NVIDIA(GPU-4): DFP-4: Internal TMDS
+[3195249.621] (--) NVIDIA(GPU-4): DFP-4: 165.0 MHz maximum pixel clock
+[3195249.621] (--) NVIDIA(GPU-4): 
+[3195249.621] (--) NVIDIA(GPU-4): DFP-5: disconnected
+[3195249.621] (--) NVIDIA(GPU-4): DFP-5: Internal DisplayPort
+[3195249.621] (--) NVIDIA(GPU-4): DFP-5: 2670.0 MHz maximum pixel clock
+[3195249.621] (--) NVIDIA(GPU-4): 
+[3195249.621] (--) NVIDIA(GPU-4): DFP-6: disconnected
+[3195249.621] (--) NVIDIA(GPU-4): DFP-6: Internal TMDS
+[3195249.621] (--) NVIDIA(GPU-4): DFP-6: 165.0 MHz maximum pixel clock
+[3195249.622] (--) NVIDIA(GPU-4): 
+[3195249.627] (II) NVIDIA(GPU-4): NVIDIA GPU NVIDIA GeForce RTX 4090 (AD102-A) at PCI:22@1:0:0
+[3195249.627] (II) NVIDIA(GPU-4):     (GPU-4)
+[3195249.627] (--) NVIDIA(GPU-4): Memory: 50319360 kBytes
+[3195249.627] (--) NVIDIA(GPU-4): VideoBIOS: 95.02.3c.c0.7b
+[3195249.627] (II) NVIDIA(GPU-4): Detected PCI Express Link width: 16X
+[3195249.630] (--) NVIDIA(0): Valid display device(s) on GPU-5 at PCI:106@1:0:0
+[3195249.630] (--) NVIDIA(0):     DFP-0
+[3195249.630] (--) NVIDIA(0):     DFP-1
+[3195249.630] (--) NVIDIA(0):     DFP-2
+[3195249.630] (--) NVIDIA(0):     DFP-3
+[3195249.630] (--) NVIDIA(0):     DFP-4
+[3195249.630] (--) NVIDIA(0):     DFP-5
+[3195249.630] (--) NVIDIA(0):     DFP-6
+[3195249.639] (--) NVIDIA(GPU-5): DFP-0: disconnected
+[3195249.639] (--) NVIDIA(GPU-5): DFP-0: Internal TMDS
+[3195249.639] (--) NVIDIA(GPU-5): DFP-0: 165.0 MHz maximum pixel clock
+[3195249.639] (--) NVIDIA(GPU-5): 
+[3195249.639] (--) NVIDIA(GPU-5): DFP-1: disconnected
+[3195249.639] (--) NVIDIA(GPU-5): DFP-1: Internal DisplayPort
+[3195249.639] (--) NVIDIA(GPU-5): DFP-1: 2670.0 MHz maximum pixel clock
+[3195249.639] (--) NVIDIA(GPU-5): 
+[3195249.639] (--) NVIDIA(GPU-5): DFP-2: disconnected
+[3195249.639] (--) NVIDIA(GPU-5): DFP-2: Internal TMDS
+[3195249.639] (--) NVIDIA(GPU-5): DFP-2: 165.0 MHz maximum pixel clock
+[3195249.639] (--) NVIDIA(GPU-5): 
+[3195249.639] (--) NVIDIA(GPU-5): DFP-3: disconnected
+[3195249.639] (--) NVIDIA(GPU-5): DFP-3: Internal DisplayPort
+[3195249.639] (--) NVIDIA(GPU-5): DFP-3: 2670.0 MHz maximum pixel clock
+[3195249.639] (--) NVIDIA(GPU-5): 
+[3195249.640] (--) NVIDIA(GPU-5): DFP-4: disconnected
+[3195249.640] (--) NVIDIA(GPU-5): DFP-4: Internal TMDS
+[3195249.640] (--) NVIDIA(GPU-5): DFP-4: 165.0 MHz maximum pixel clock
+[3195249.640] (--) NVIDIA(GPU-5): 
+[3195249.640] (--) NVIDIA(GPU-5): DFP-5: disconnected
+[3195249.640] (--) NVIDIA(GPU-5): DFP-5: Internal DisplayPort
+[3195249.640] (--) NVIDIA(GPU-5): DFP-5: 2670.0 MHz maximum pixel clock
+[3195249.640] (--) NVIDIA(GPU-5): 
+[3195249.640] (--) NVIDIA(GPU-5): DFP-6: disconnected
+[3195249.640] (--) NVIDIA(GPU-5): DFP-6: Internal TMDS
+[3195249.640] (--) NVIDIA(GPU-5): DFP-6: 165.0 MHz maximum pixel clock
+[3195249.640] (--) NVIDIA(GPU-5): 
+[3195249.646] (II) NVIDIA(GPU-5): NVIDIA GPU NVIDIA GeForce RTX 4090 (AD102-A) at PCI:106@1:0:0
+[3195249.646] (II) NVIDIA(GPU-5):     (GPU-5)
+[3195249.646] (--) NVIDIA(GPU-5): Memory: 50319360 kBytes
+[3195249.646] (--) NVIDIA(GPU-5): VideoBIOS: 95.02.3c.c0.7b
+[3195249.646] (II) NVIDIA(GPU-5): Detected PCI Express Link width: 16X
+[3195249.648] (--) NVIDIA(0): Valid display device(s) on GPU-6 at PCI:148@1:0:0
+[3195249.648] (--) NVIDIA(0):     DFP-0
+[3195249.648] (--) NVIDIA(0):     DFP-1
+[3195249.648] (--) NVIDIA(0):     DFP-2
+[3195249.648] (--) NVIDIA(0):     DFP-3
+[3195249.648] (--) NVIDIA(0):     DFP-4
+[3195249.648] (--) NVIDIA(0):     DFP-5
+[3195249.648] (--) NVIDIA(0):     DFP-6
+[3195249.657] (--) NVIDIA(GPU-6): DFP-0: disconnected
+[3195249.657] (--) NVIDIA(GPU-6): DFP-0: Internal TMDS
+[3195249.657] (--) NVIDIA(GPU-6): DFP-0: 165.0 MHz maximum pixel clock
+[3195249.657] (--) NVIDIA(GPU-6): 
+[3195249.657] (--) NVIDIA(GPU-6): DFP-1: disconnected
+[3195249.657] (--) NVIDIA(GPU-6): DFP-1: Internal DisplayPort
+[3195249.657] (--) NVIDIA(GPU-6): DFP-1: 2670.0 MHz maximum pixel clock
+[3195249.657] (--) NVIDIA(GPU-6): 
+[3195249.657] (--) NVIDIA(GPU-6): DFP-2: disconnected
+[3195249.657] (--) NVIDIA(GPU-6): DFP-2: Internal TMDS
+[3195249.657] (--) NVIDIA(GPU-6): DFP-2: 165.0 MHz maximum pixel clock
+[3195249.657] (--) NVIDIA(GPU-6): 
+[3195249.657] (--) NVIDIA(GPU-6): DFP-3: disconnected
+[3195249.657] (--) NVIDIA(GPU-6): DFP-3: Internal DisplayPort
+[3195249.657] (--) NVIDIA(GPU-6): DFP-3: 2670.0 MHz maximum pixel clock
+[3195249.657] (--) NVIDIA(GPU-6): 
+[3195249.658] (--) NVIDIA(GPU-6): DFP-4: disconnected
+[3195249.658] (--) NVIDIA(GPU-6): DFP-4: Internal TMDS
+[3195249.658] (--) NVIDIA(GPU-6): DFP-4: 165.0 MHz maximum pixel clock
+[3195249.658] (--) NVIDIA(GPU-6): 
+[3195249.658] (--) NVIDIA(GPU-6): DFP-5: disconnected
+[3195249.658] (--) NVIDIA(GPU-6): DFP-5: Internal DisplayPort
+[3195249.658] (--) NVIDIA(GPU-6): DFP-5: 2670.0 MHz maximum pixel clock
+[3195249.658] (--) NVIDIA(GPU-6): 
+[3195249.658] (--) NVIDIA(GPU-6): DFP-6: disconnected
+[3195249.658] (--) NVIDIA(GPU-6): DFP-6: Internal TMDS
+[3195249.658] (--) NVIDIA(GPU-6): DFP-6: 165.0 MHz maximum pixel clock
+[3195249.658] (--) NVIDIA(GPU-6): 
+[3195249.664] (II) NVIDIA(GPU-6): NVIDIA GPU NVIDIA GeForce RTX 4090 (AD102-A) at PCI:148@1:0:0
+[3195249.664] (II) NVIDIA(GPU-6):     (GPU-6)
+[3195249.664] (--) NVIDIA(GPU-6): Memory: 50319360 kBytes
+[3195249.664] (--) NVIDIA(GPU-6): VideoBIOS: 95.02.3c.c0.7b
+[3195249.664] (II) NVIDIA(GPU-6): Detected PCI Express Link width: 16X
+[3195249.668] (--) NVIDIA(0): Valid display device(s) on GPU-7 at PCI:190@1:0:0
+[3195249.668] (--) NVIDIA(0):     DFP-0
+[3195249.668] (--) NVIDIA(0):     DFP-1
+[3195249.668] (--) NVIDIA(0):     DFP-2
+[3195249.668] (--) NVIDIA(0):     DFP-3
+[3195249.668] (--) NVIDIA(0):     DFP-4
+[3195249.668] (--) NVIDIA(0):     DFP-5
+[3195249.668] (--) NVIDIA(0):     DFP-6
+[3195249.684] (--) NVIDIA(GPU-7): DFP-0: disconnected
+[3195249.684] (--) NVIDIA(GPU-7): DFP-0: Internal TMDS
+[3195249.684] (--) NVIDIA(GPU-7): DFP-0: 165.0 MHz maximum pixel clock
+[3195249.684] (--) NVIDIA(GPU-7): 
+[3195249.684] (--) NVIDIA(GPU-7): DFP-1: disconnected
+[3195249.684] (--) NVIDIA(GPU-7): DFP-1: Internal DisplayPort
+[3195249.684] (--) NVIDIA(GPU-7): DFP-1: 2670.0 MHz maximum pixel clock
+[3195249.684] (--) NVIDIA(GPU-7): 
+[3195249.684] (--) NVIDIA(GPU-7): DFP-2: disconnected
+[3195249.684] (--) NVIDIA(GPU-7): DFP-2: Internal TMDS
+[3195249.684] (--) NVIDIA(GPU-7): DFP-2: 165.0 MHz maximum pixel clock
+[3195249.684] (--) NVIDIA(GPU-7): 
+[3195249.684] (--) NVIDIA(GPU-7): DFP-3: disconnected
+[3195249.684] (--) NVIDIA(GPU-7): DFP-3: Internal DisplayPort
+[3195249.684] (--) NVIDIA(GPU-7): DFP-3: 2670.0 MHz maximum pixel clock
+[3195249.684] (--) NVIDIA(GPU-7): 
+[3195249.685] (--) NVIDIA(GPU-7): DFP-4: disconnected
+[3195249.685] (--) NVIDIA(GPU-7): DFP-4: Internal TMDS
+[3195249.685] (--) NVIDIA(GPU-7): DFP-4: 165.0 MHz maximum pixel clock
+[3195249.685] (--) NVIDIA(GPU-7): 
+[3195249.685] (--) NVIDIA(GPU-7): DFP-5: disconnected
+[3195249.685] (--) NVIDIA(GPU-7): DFP-5: Internal DisplayPort
+[3195249.685] (--) NVIDIA(GPU-7): DFP-5: 2670.0 MHz maximum pixel clock
+[3195249.685] (--) NVIDIA(GPU-7): 
+[3195249.685] (--) NVIDIA(GPU-7): DFP-6: disconnected
+[3195249.685] (--) NVIDIA(GPU-7): DFP-6: Internal TMDS
+[3195249.685] (--) NVIDIA(GPU-7): DFP-6: 165.0 MHz maximum pixel clock
+[3195249.685] (--) NVIDIA(GPU-7): 
+[3195249.691] (II) NVIDIA(GPU-7): NVIDIA GPU NVIDIA GeForce RTX 4090 (AD102-A) at PCI:190@1:0:0
+[3195249.691] (II) NVIDIA(GPU-7):     (GPU-7)
+[3195249.691] (--) NVIDIA(GPU-7): Memory: 50319360 kBytes
+[3195249.691] (--) NVIDIA(GPU-7): VideoBIOS: 95.02.3c.c0.7b
+[3195249.691] (II) NVIDIA(GPU-7): Detected PCI Express Link width: 16X
+[3195249.706] (II) NVIDIA: Reserving 24576.00 MB of virtual memory for indirect memory
+[3195249.706] (II) NVIDIA:     access.
+[3195249.719] (II) NVIDIA(0): ACPI: failed to connect to the ACPI event daemon; the daemon
+[3195249.719] (II) NVIDIA(0):     may not be running or the "AcpidSocketPath" X
+[3195249.719] (II) NVIDIA(0):     configuration option may not be set correctly.  When the
+[3195249.719] (II) NVIDIA(0):     ACPI event daemon is available, the NVIDIA X driver will
+[3195249.719] (II) NVIDIA(0):     try to use it to receive ACPI event notifications.  For
+[3195249.719] (II) NVIDIA(0):     details, please see the "ConnectToAcpid" and
+[3195249.719] (II) NVIDIA(0):     "AcpidSocketPath" X configuration options in Appendix B: X
+[3195249.719] (II) NVIDIA(0):     Config Options in the README.
+[3195249.740] (II) NVIDIA(0): Setting mode "NULL"
+[3195249.766] (==) NVIDIA(0): Disabling shared memory pixmaps
+[3195249.766] (==) NVIDIA(0): Backing store enabled
+[3195249.766] (==) NVIDIA(0): Silken mouse enabled
+[3195249.767] (==) NVIDIA(0): DPMS enabled
+[3195249.767] (II) Loading sub module "dri2"
+[3195249.767] (II) LoadModule: "dri2"
+[3195249.767] (II) Module "dri2" already built-in
+[3195249.767] (II) NVIDIA(0): [DRI2] Setup complete
+[3195249.767] (II) NVIDIA(0): [DRI2]   VDPAU driver: nvidia
+[3195249.767] (II) Initializing extension Generic Event Extension
+[3195249.767] (II) Initializing extension SHAPE
+[3195249.767] (II) Initializing extension MIT-SHM
+[3195249.767] (II) Initializing extension XInputExtension
+[3195249.767] (II) Initializing extension XTEST
+[3195249.767] (II) Initializing extension BIG-REQUESTS
+[3195249.767] (II) Initializing extension SYNC
+[3195249.767] (II) Initializing extension XKEYBOARD
+[3195249.767] (II) Initializing extension XC-MISC
+[3195249.767] (II) Initializing extension SECURITY
+[3195249.767] (II) Initializing extension XFIXES
+[3195249.768] (II) Initializing extension RENDER
+[3195249.768] (II) Initializing extension RANDR
+[3195249.768] (II) Initializing extension COMPOSITE
+[3195249.768] (II) Initializing extension DAMAGE
+[3195249.768] (II) Initializing extension MIT-SCREEN-SAVER
+[3195249.768] (II) Initializing extension DOUBLE-BUFFER
+[3195249.768] (II) Initializing extension RECORD
+[3195249.768] (II) Initializing extension DPMS
+[3195249.768] (II) Initializing extension Present
+[3195249.768] (II) Initializing extension DRI3
+[3195249.768] (II) Initializing extension X-Resource
+[3195249.768] (II) Initializing extension XVideo
+[3195249.768] (II) Initializing extension XVideo-MotionCompensation
+[3195249.768] (II) Initializing extension SELinux
+[3195249.768] (II) SELinux: Disabled on system
+[3195249.768] (II) Initializing extension GLX
+[3195249.768] (II) Initializing extension GLX
+[3195249.768] (II) Indirect GLX disabled.
+[3195249.769] (II) GLX: Another vendor is already registered for screen 0
+[3195249.769] (II) Initializing extension XFree86-VidModeExtension
+[3195249.769] (II) Initializing extension XFree86-DGA
+[3195249.769] (II) Initializing extension XFree86-DRI
+[3195249.769] (II) Initializing extension DRI2
+[3195249.769] (II) Initializing extension NV-GLX
+[3195249.769] (II) Initializing extension NV-CONTROL
+[3195249.884] (II) config/udev: Adding input device Power Button (/dev/input/event1)
+[3195249.884] (II) No input driver specified, ignoring this device.
+[3195249.884] (II) This device may have been added with another device file.
+[3195249.884] (II) config/udev: Adding input device Power Button (/dev/input/event0)
+[3195249.884] (II) No input driver specified, ignoring this device.
+[3195249.884] (II) This device may have been added with another device file.
+[3195249.884] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3 (/dev/input/event16)
+[3195249.884] (II) No input driver specified, ignoring this device.
+[3195249.884] (II) This device may have been added with another device file.
+[3195249.885] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=7 (/dev/input/event25)
+[3195249.885] (II) No input driver specified, ignoring this device.
+[3195249.885] (II) This device may have been added with another device file.
+[3195249.885] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=8 (/dev/input/event31)
+[3195249.885] (II) No input driver specified, ignoring this device.
+[3195249.885] (II) This device may have been added with another device file.
+[3195249.885] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=9 (/dev/input/event262)
+[3195249.885] (II) No input driver specified, ignoring this device.
+[3195249.885] (II) This device may have been added with another device file.
+[3195249.885] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=10 (/dev/input/event269)
+[3195249.885] (II) No input driver specified, ignoring this device.
+[3195249.885] (II) This device may have been added with another device file.
+[3195249.885] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=11 (/dev/input/event274)
+[3195249.885] (II) No input driver specified, ignoring this device.
+[3195249.885] (II) This device may have been added with another device file.
+[3195249.885] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=12 (/dev/input/event279)
+[3195249.885] (II) No input driver specified, ignoring this device.
+[3195249.885] (II) This device may have been added with another device file.
+[3195249.886] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3 (/dev/input/event12)
+[3195249.886] (II) No input driver specified, ignoring this device.
+[3195249.886] (II) This device may have been added with another device file.
+[3195249.886] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=7 (/dev/input/event15)
+[3195249.886] (II) No input driver specified, ignoring this device.
+[3195249.886] (II) This device may have been added with another device file.
+[3195249.886] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=8 (/dev/input/event20)
+[3195249.886] (II) No input driver specified, ignoring this device.
+[3195249.886] (II) This device may have been added with another device file.
+[3195249.886] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=9 (/dev/input/event28)
+[3195249.886] (II) No input driver specified, ignoring this device.
+[3195249.886] (II) This device may have been added with another device file.
+[3195249.886] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=10 (/dev/input/event260)
+[3195249.886] (II) No input driver specified, ignoring this device.
+[3195249.886] (II) This device may have been added with another device file.
+[3195249.886] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=11 (/dev/input/event267)
+[3195249.886] (II) No input driver specified, ignoring this device.
+[3195249.886] (II) This device may have been added with another device file.
+[3195249.887] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=12 (/dev/input/event272)
+[3195249.887] (II) No input driver specified, ignoring this device.
+[3195249.887] (II) This device may have been added with another device file.
+[3195249.887] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3 (/dev/input/event9)
+[3195249.887] (II) No input driver specified, ignoring this device.
+[3195249.887] (II) This device may have been added with another device file.
+[3195249.887] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=7 (/dev/input/event10)
+[3195249.887] (II) No input driver specified, ignoring this device.
+[3195249.887] (II) This device may have been added with another device file.
+[3195249.887] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=8 (/dev/input/event11)
+[3195249.887] (II) No input driver specified, ignoring this device.
+[3195249.887] (II) This device may have been added with another device file.
+[3195249.887] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=9 (/dev/input/event19)
+[3195249.887] (II) No input driver specified, ignoring this device.
+[3195249.887] (II) This device may have been added with another device file.
+[3195249.888] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=10 (/dev/input/event26)
+[3195249.888] (II) No input driver specified, ignoring this device.
+[3195249.888] (II) This device may have been added with another device file.
+[3195249.888] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=11 (/dev/input/event258)
+[3195249.888] (II) No input driver specified, ignoring this device.
+[3195249.888] (II) This device may have been added with another device file.
+[3195249.888] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=12 (/dev/input/event266)
+[3195249.888] (II) No input driver specified, ignoring this device.
+[3195249.888] (II) This device may have been added with another device file.
+[3195249.888] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3 (/dev/input/event13)
+[3195249.888] (II) No input driver specified, ignoring this device.
+[3195249.888] (II) This device may have been added with another device file.
+[3195249.888] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=7 (/dev/input/event14)
+[3195249.888] (II) No input driver specified, ignoring this device.
+[3195249.888] (II) This device may have been added with another device file.
+[3195249.889] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=8 (/dev/input/event17)
+[3195249.889] (II) No input driver specified, ignoring this device.
+[3195249.889] (II) This device may have been added with another device file.
+[3195249.889] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=9 (/dev/input/event18)
+[3195249.889] (II) No input driver specified, ignoring this device.
+[3195249.889] (II) This device may have been added with another device file.
+[3195249.889] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=10 (/dev/input/event24)
+[3195249.889] (II) No input driver specified, ignoring this device.
+[3195249.889] (II) This device may have been added with another device file.
+[3195249.889] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=11 (/dev/input/event257)
+[3195249.889] (II) No input driver specified, ignoring this device.
+[3195249.889] (II) This device may have been added with another device file.
+[3195249.889] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=12 (/dev/input/event263)
+[3195249.889] (II) No input driver specified, ignoring this device.
+[3195249.889] (II) This device may have been added with another device file.
+[3195249.889] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3 (/dev/input/event27)
+[3195249.889] (II) No input driver specified, ignoring this device.
+[3195249.889] (II) This device may have been added with another device file.
+[3195249.890] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=7 (/dev/input/event256)
+[3195249.890] (II) No input driver specified, ignoring this device.
+[3195249.890] (II) This device may have been added with another device file.
+[3195249.890] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=8 (/dev/input/event264)
+[3195249.890] (II) No input driver specified, ignoring this device.
+[3195249.890] (II) This device may have been added with another device file.
+[3195249.890] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=9 (/dev/input/event270)
+[3195249.890] (II) No input driver specified, ignoring this device.
+[3195249.890] (II) This device may have been added with another device file.
+[3195249.890] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=10 (/dev/input/event275)
+[3195249.890] (II) No input driver specified, ignoring this device.
+[3195249.890] (II) This device may have been added with another device file.
+[3195249.890] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=11 (/dev/input/event280)
+[3195249.890] (II) No input driver specified, ignoring this device.
+[3195249.890] (II) This device may have been added with another device file.
+[3195249.890] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=12 (/dev/input/event281)
+[3195249.890] (II) No input driver specified, ignoring this device.
+[3195249.890] (II) This device may have been added with another device file.
+[3195249.891] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3 (/dev/input/event22)
+[3195249.891] (II) No input driver specified, ignoring this device.
+[3195249.891] (II) This device may have been added with another device file.
+[3195249.891] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=7 (/dev/input/event23)
+[3195249.891] (II) No input driver specified, ignoring this device.
+[3195249.891] (II) This device may have been added with another device file.
+[3195249.891] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=8 (/dev/input/event30)
+[3195249.891] (II) No input driver specified, ignoring this device.
+[3195249.891] (II) This device may have been added with another device file.
+[3195249.891] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=9 (/dev/input/event261)
+[3195249.891] (II) No input driver specified, ignoring this device.
+[3195249.891] (II) This device may have been added with another device file.
+[3195249.891] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=10 (/dev/input/event268)
+[3195249.891] (II) No input driver specified, ignoring this device.
+[3195249.891] (II) This device may have been added with another device file.
+[3195249.891] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=11 (/dev/input/event273)
+[3195249.891] (II) No input driver specified, ignoring this device.
+[3195249.891] (II) This device may have been added with another device file.
+[3195249.892] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=12 (/dev/input/event278)
+[3195249.892] (II) No input driver specified, ignoring this device.
+[3195249.892] (II) This device may have been added with another device file.
+[3195249.892] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=7 (/dev/input/event3)
+[3195249.892] (II) No input driver specified, ignoring this device.
+[3195249.892] (II) This device may have been added with another device file.
+[3195249.892] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=8 (/dev/input/event4)
+[3195249.892] (II) No input driver specified, ignoring this device.
+[3195249.892] (II) This device may have been added with another device file.
+[3195249.892] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=9 (/dev/input/event5)
+[3195249.892] (II) No input driver specified, ignoring this device.
+[3195249.892] (II) This device may have been added with another device file.
+[3195249.892] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=10 (/dev/input/event6)
+[3195249.892] (II) No input driver specified, ignoring this device.
+[3195249.892] (II) This device may have been added with another device file.
+[3195249.893] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=11 (/dev/input/event7)
+[3195249.893] (II) No input driver specified, ignoring this device.
+[3195249.893] (II) This device may have been added with another device file.
+[3195249.893] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=12 (/dev/input/event8)
+[3195249.893] (II) No input driver specified, ignoring this device.
+[3195249.893] (II) This device may have been added with another device file.
+[3195249.893] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3 (/dev/input/event2)
+[3195249.893] (II) No input driver specified, ignoring this device.
+[3195249.893] (II) This device may have been added with another device file.
+[3195249.893] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=3 (/dev/input/event21)
+[3195249.893] (II) No input driver specified, ignoring this device.
+[3195249.893] (II) This device may have been added with another device file.
+[3195249.893] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=7 (/dev/input/event29)
+[3195249.893] (II) No input driver specified, ignoring this device.
+[3195249.893] (II) This device may have been added with another device file.
+[3195249.893] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=8 (/dev/input/event259)
+[3195249.893] (II) No input driver specified, ignoring this device.
+[3195249.893] (II) This device may have been added with another device file.
+[3195249.894] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=9 (/dev/input/event265)
+[3195249.894] (II) No input driver specified, ignoring this device.
+[3195249.894] (II) This device may have been added with another device file.
+[3195249.894] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=10 (/dev/input/event271)
+[3195249.894] (II) No input driver specified, ignoring this device.
+[3195249.894] (II) This device may have been added with another device file.
+[3195249.894] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=11 (/dev/input/event276)
+[3195249.894] (II) No input driver specified, ignoring this device.
+[3195249.894] (II) This device may have been added with another device file.
+[3195249.894] (II) config/udev: Adding input device HDA NVidia HDMI/DP,pcm=12 (/dev/input/event277)
+[3195249.894] (II) No input driver specified, ignoring this device.
+[3195249.894] (II) This device may have been added with another device file.
+[3196413.326] (II) NVIDIA(GPU-0): Deleting GPU-0
+[3196413.326] (II) NVIDIA(GPU-1): Renaming GPU-1 to GPU-0
+[3196413.326] (II) NVIDIA(GPU-2): Renaming GPU-2 to GPU-1
+[3196413.326] (II) NVIDIA(GPU-3): Renaming GPU-3 to GPU-2
+[3196413.326] (II) NVIDIA(GPU-4): Renaming GPU-4 to GPU-3
+[3196413.326] (II) NVIDIA(GPU-5): Renaming GPU-5 to GPU-4
+[3196413.326] (II) NVIDIA(GPU-6): Renaming GPU-6 to GPU-5
+[3196413.326] (II) NVIDIA(GPU-7): Renaming GPU-7 to GPU-6
+[3196413.326] (II) NVIDIA(GPU-0): Deleting GPU-0
+[3196413.326] (II) NVIDIA(GPU-1): Renaming GPU-1 to GPU-0
+[3196413.326] (II) NVIDIA(GPU-2): Renaming GPU-2 to GPU-1
+[3196413.326] (II) NVIDIA(GPU-3): Renaming GPU-3 to GPU-2
+[3196413.326] (II) NVIDIA(GPU-4): Renaming GPU-4 to GPU-3
+[3196413.326] (II) NVIDIA(GPU-5): Renaming GPU-5 to GPU-4
+[3196413.326] (II) NVIDIA(GPU-6): Renaming GPU-6 to GPU-5
+[3196413.326] (II) NVIDIA(GPU-0): Deleting GPU-0
+[3196413.326] (II) NVIDIA(GPU-1): Renaming GPU-1 to GPU-0
+[3196413.326] (II) NVIDIA(GPU-2): Renaming GPU-2 to GPU-1
+[3196413.326] (II) NVIDIA(GPU-3): Renaming GPU-3 to GPU-2
+[3196413.326] (II) NVIDIA(GPU-4): Renaming GPU-4 to GPU-3
+[3196413.326] (II) NVIDIA(GPU-5): Renaming GPU-5 to GPU-4
+[3196413.326] (II) NVIDIA(GPU-0): Deleting GPU-0
+[3196413.326] (II) NVIDIA(GPU-1): Renaming GPU-1 to GPU-0
+[3196413.326] (II) NVIDIA(GPU-2): Renaming GPU-2 to GPU-1
+[3196413.326] (II) NVIDIA(GPU-3): Renaming GPU-3 to GPU-2
+[3196413.326] (II) NVIDIA(GPU-4): Renaming GPU-4 to GPU-3
+[3196413.326] (II) NVIDIA(GPU-0): Deleting GPU-0
+[3196413.326] (II) NVIDIA(GPU-1): Renaming GPU-1 to GPU-0
+[3196413.326] (II) NVIDIA(GPU-2): Renaming GPU-2 to GPU-1
+[3196413.326] (II) NVIDIA(GPU-3): Renaming GPU-3 to GPU-2
+[3196413.326] (II) NVIDIA(GPU-0): Deleting GPU-0
+[3196413.326] (II) NVIDIA(GPU-1): Renaming GPU-1 to GPU-0
+[3196413.326] (II) NVIDIA(GPU-2): Renaming GPU-2 to GPU-1
+[3196413.326] (II) NVIDIA(GPU-0): Deleting GPU-0
+[3196413.326] (II) NVIDIA(GPU-1): Renaming GPU-1 to GPU-0
+[3196413.326] (II) NVIDIA(GPU-0): Deleting GPU-0
+[3196413.340] (II) Server terminated successfully (0). Closing log file.

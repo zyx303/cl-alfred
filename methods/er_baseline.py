@@ -35,15 +35,15 @@ class ER:
 
         self.model = model
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
-        self.lr_gamma = 0.9999
-        self.scheduler = torch.optim.lr_scheduler.LambdaLR(self.optimizer, lambda iter: 1)
+        self.lr_gamma = 0.9995
+        self.scheduler = torch.optim.lr_scheduler.ExponentialLR(self.optimizer, gamma=self.lr_gamma)
 
         self.memory = MemoryDataset(cls_list=self.exposed_classes, data_dir=self.data_dir)
         self.temp_batch = []
         self.num_updates = 0
         self.train_count = 0
-        self.batch_size = kwargs["batchsize"]
 
+        # Logger
         self.writer = SummaryWriter(log_dir=kwargs['dout'])
 
     def online_step(self, sample, sample_num):
@@ -71,7 +71,8 @@ class ER:
         if(len(self.memory)):
             self.memory.add_new_class(cls_list=self.exposed_classes)
         if 'reset' in self.sched_name:
-            self.update_schedule(reset=True)
+            # When a new class arrives, reset optimizer states and LR schedule
+            self.reset_opt()
 
     def online_train(self, sample, batch_size, iterations=1, stream_batch_size=1):
         if stream_batch_size > 0:
@@ -137,9 +138,8 @@ class ER:
 
     def update_schedule(self, reset=False):
         if reset:
-            self.scheduler = torch.optim.lr_scheduler.LambdaLR(self.optimizer, lambda iter: 1)
-            for param_group in self.optimizer.param_groups:
-                param_group["lr"] = self.lr
+            # Reset optimizer states and LR schedule
+            self.reset_opt()
         else:
             self.scheduler.step()
 
@@ -166,8 +166,9 @@ class ER:
             self.memory.replace_sample(sample)
 
     def reset_opt(self):
+        # Re-create optimizer to reset momentum/adam states and restore LR
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
-        self.scheduler = torch.optim.lr_scheduler.LambdaLR(self.optimizer, lambda iter: 1)
+        self.scheduler = torch.optim.lr_scheduler.ExponentialLR(self.optimizer, gamma=self.lr_gamma)
 
     def evaluation(self, test_list, sample_num, batch_size=32):
         eval_dict = {}

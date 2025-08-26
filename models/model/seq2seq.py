@@ -1,5 +1,6 @@
 import os
 import sys
+import pprint
 
 import random
 import json
@@ -9,6 +10,7 @@ import numpy as np
 from torch import nn
 from tqdm import trange, tqdm
 from torch.utils.data import DataLoader
+from torch.utils.tensorboard import SummaryWriter
 
 from utils.method_manager import select_method
 from collections import defaultdict
@@ -43,7 +45,68 @@ class Module(nn.Module):
         random.seed(a=args.seed)
         np.random.seed(args.seed)
 
-    def run_train1(self, args=None):
+    def run_train_online(self, args=None):
+        '''
+        training loop
+        '''
+
+        # args
+        args = args or self.args
+
+        # dump config
+        fconfig = os.path.join(args.dout, 'config.json')
+        with open(fconfig, 'wt') as f:
+            json.dump(vars(args), f, indent=4)
+
+        # display dout
+        print("Saving to: %s" % self.args.dout)
+
+        cl_method = select_method(args=args, n_classes=args.n_tasks, model=self)
+
+        test_datalist_seen = json.load(open(f'embodied_split/{args.incremental_setup}/valid_seen.json', 'r'))
+        test_datalist_seen = [(s, False) for s in test_datalist_seen]
+        test_datalist_unseen = json.load(open(f'embodied_split/{args.incremental_setup}/valid_unseen.json', 'r'))
+        test_datalist_unseen = [(s, False) for s in test_datalist_unseen]
+
+        samples_cnt = 0
+        eval_results_seen = defaultdict(list)
+        eval_results_unseen = defaultdict(list)
+        for cur_iter in range(args.n_tasks):
+            cur_train_datalist = json.load(open(f'embodied_split/{args.incremental_setup}/embodied_data_disjoint_rand{args.stream_seed}_cls1_task{cur_iter}.json', 'r'))
+
+            cl_method.online_before_task(cur_iter)
+            for i, data in enumerate(tqdm(cur_train_datalist)):
+                samples_cnt += 1
+                traj_data = self.load_task_json(data['task'])
+                data['num_frames'] = len([aa for a in traj_data['num']['action_low'] for aa in a])
+
+                cl_method.online_step(data, samples_cnt)
+
+                if samples_cnt % args.eval_period == 0:
+                    # valid_seen
+                    eval_dict_seen = cl_method.online_evaluate(test_datalist_seen, samples_cnt, args.batchsize, tag='valid_seen')
+                    eval_results_seen["data_cnt"].append(samples_cnt)
+                    for k in eval_results_seen:
+                        if k not in ['data_cnt']:
+                            eval_results_seen[k].append(eval_dict_seen[k])
+
+                    # valid_unseen
+                    eval_dict_unseen = cl_method.online_evaluate(test_datalist_unseen, samples_cnt, args.batchsize, tag='valid_unseen')
+                    eval_results_unseen["data_cnt"].append(samples_cnt)
+                    for k in eval_results_unseen:
+                        if k not in ['data_cnt']:
+                            eval_results_unseen[k].append(eval_dict_unseen[k])
+            cl_method.online_after_task(cur_iter)
+
+            torch.save({
+                'metric': {'samples_cnt': samples_cnt},
+                'model': self.state_dict(),
+                'optim': cl_method.optimizer.state_dict(),
+                'args': self.args,
+                'vocab': self.vocab,
+            }, os.path.join(args.dout, 'net_epoch_%09d_%s.pth' % (samples_cnt, data['klass'])))
+
+    def run_train(self, args=None):
         '''
         按任务的离线训练：每个 task 使用 DataLoader 批训练（可多 epoch），不再逐样本 online。
         '''
@@ -68,8 +131,7 @@ class Module(nn.Module):
         test_datalist_unseen = [(s, False) for s in test_datalist_unseen]
 
         # 训练配置
-        # epochs_per_task = getattr(args, 'epochs_per_task', 5)
-        epochs_per_task = 5
+        epochs_per_task = getattr(args, 'epochs_per_task', 5)
         batch_size = args.batchsize
 
         samples_cnt = 0
@@ -105,10 +167,13 @@ class Module(nn.Module):
 
             # 构建 DataLoader（stream 批次）
             from utils.data_loader import StreamDataset
+            
+            stream_batch_size = batch_size // 2
+
             stream_ds = StreamDataset(datalist=cur_train_datalist,
                                       cls_list=cl_method.exposed_classes,
                                       data_dir=getattr(args, 'data_dir', None))
-            stream_loader = DataLoader(stream_ds, batch_size=batch_size, shuffle=True,
+            stream_loader = DataLoader(stream_ds, batch_size=stream_batch_size, shuffle=True,
                                        drop_last=False, collate_fn=lambda x: x)
 
             # 为了能把 (task, swapColor) 还原为完整 sample，这里建映射

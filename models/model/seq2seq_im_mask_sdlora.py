@@ -1,4 +1,5 @@
 import os
+import re
 import torch
 import numpy as np
 import collections
@@ -10,106 +11,109 @@ from models.utils.metric import compute_f1, compute_exact
 from gen.utils.image_util import decompress_mask
 from models.nn import vnn
 import models.nn.vnn as vnn
-
+import math
 import constants
 classes = [0] + constants.OBJECTS + ['AppleSliced', 'ShowerCurtain', 'TomatoSliced', 'LettuceSliced', 'Lamp', 'ShowerHead', 'EggCracked', 'BreadSliced', 'PotatoSliced', 'Faucet']
-
-
-class MultiTaskLoRALayer(nn.Module):
-    """
-    Multi-task LoRA layer that supports multiple tasks with independent adapters
-    """
-    def __init__(self, in_features, out_features, rank=4, num_tasks=1):
-        super().__init__()
-        self.in_features = in_features
-        self.out_features = out_features
-        self.rank = rank
-        self.num_tasks = num_tasks
-        self.current_task = 0
-        
-        # Create LoRA layers for each task
-        self.lora_A = nn.ModuleDict()
-        self.lora_B = nn.ModuleDict()
-        self.scales = nn.ParameterDict()
-        
-        for i in range(num_tasks):
-            task_name = f"task{i}"
-            self.lora_A[task_name] = nn.Linear(in_features, rank, bias=False)
-            self.lora_B[task_name] = nn.Linear(rank, out_features, bias=False)
-            self.scales[task_name] = nn.Parameter(torch.tensor([0.8]))
-            
-            # Initialize weights
-            nn.init.kaiming_uniform_(self.lora_A[task_name].weight, a=np.sqrt(5))
-            nn.init.zeros_(self.lora_B[task_name].weight)
-    
-    def add_task(self, task_id):
-        """Add a new task with its own LoRA layers"""
-        task_name = f"task{task_id}"
-        if task_name not in self.lora_A:
-            self.lora_A[task_name] = nn.Linear(self.in_features, self.rank, bias=False)
-            self.lora_B[task_name] = nn.Linear(self.rank, self.out_features, bias=False)
-            self.scales[task_name] = nn.Parameter(torch.tensor([0.8]))
-            
-            # Initialize weights
-            nn.init.kaiming_uniform_(self.lora_A[task_name].weight, a=np.sqrt(5))
-            nn.init.zeros_(self.lora_B[task_name].weight)
-            
-            # Move to same device as existing parameters
-            if len(self.lora_A) > 1:
-                device = next(iter(self.lora_A.values())).weight.device
-                self.lora_A[task_name] = self.lora_A[task_name].to(device)
-                self.lora_B[task_name] = self.lora_B[task_name].to(device)
-                self.scales[task_name] = self.scales[task_name].to(device)
-            
-            self.num_tasks = max(self.num_tasks, task_id + 1)
-    
-    def set_task(self, task_id):
-        """Set the current active task"""
-        self.current_task = task_id
-        task_name = f"task{task_id}"
-        if task_name not in self.lora_A:
-            self.add_task(task_id)
-    
-    def forward(self, x):
-        """Forward pass using current task's LoRA layers"""
-        task_name = f"task{self.current_task}"
-        if task_name not in self.lora_A:
-            return torch.zeros_like(x[..., :self.out_features])
-        
-        result = self.lora_A[task_name](x)
-        result = self.lora_B[task_name](result)
-        return result * self.scales[task_name]
-
 
 class LoRALinear(nn.Module):
     """
     Linear layer with multi-task LoRA adaptation
     """
-    def __init__(self, original_layer, rank=4, num_tasks=1):
+    def __init__(self, original_layer, rank=4, current_task=0, path=None):
         super().__init__()
         self.original_layer = original_layer
-        self.lora = MultiTaskLoRALayer(
-            original_layer.in_features, 
-            original_layer.out_features, 
-            rank=rank, 
-            num_tasks=num_tasks
-        )
-        
+        self.in_features = original_layer.in_features
+        self.out_features = original_layer.out_features
+        self.rank = rank
+        self.lora_A_dict = nn.ModuleDict()
+        self.lora_B_dict = nn.ModuleDict()
+        self.task_id = current_task
+        self.directions = nn.ParameterDict()
+        self.scales = nn.ParameterDict()
+        self._init_task_lora(current_task)
+
+    # 不再从外部路径加载，全部依赖于 state_dict 恢复
+
         # Freeze original parameters
         for param in self.original_layer.parameters():
             param.requires_grad = False
     
+    def _load_previous_tasks(self, path):
+        """占位：保留接口但不做任何加载（统一使用 state_dict）"""
+        return
+    
+    def _init_task_lora(self, task_id):
+        """初始化特定任务的LoRA参数"""
+        task_name = f'task_{task_id}'
+        
+        # 创建新的LoRA A和B层
+        lora_A = nn.Linear(self.in_features, self.rank, bias=False)
+        lora_B = nn.Linear(self.rank, self.out_features, bias=False)
+        
+        # 初始化权重
+        nn.init.kaiming_uniform_(lora_A.weight, a=math.sqrt(5))
+        nn.init.zeros_(lora_B.weight)
+
+        # 确保与原始层处于同一设备与dtype
+        dev = self.original_layer.weight.device
+        dtype = self.original_layer.weight.dtype
+        lora_A = lora_A.to(device=dev, dtype=dtype)
+        lora_B = lora_B.to(device=dev, dtype=dtype)
+        
+        # 存储到字典中
+        self.lora_A_dict[task_name] = lora_A
+        self.lora_B_dict[task_name] = lora_B
+        
+        # 添加scale参数
+        self.scales[task_name] = nn.Parameter(torch.ones(1, device=dev, dtype=dtype))
+        self.scales[task_name].requires_grad = True
+
     def forward(self, x):
-        return self.original_layer(x) + self.lora(x)
+        # 保留线性层输入用于LoRA残差
+        input_x = x
+        out = self.original_layer(x)
+
+        # 叠加已完成任务的方向增益：input_x @ direction^T -> [B, out_features]
+        if self.task_id > 0:
+            for i in range(self.task_id):
+                tname = f'task_{i}'
+                if tname in self.directions and tname in self.scales:
+                    # directions[tname]: [out_features, in_features]
+                    # input_x: [B, in_features]
+                    out = out + self.scales[tname] * (input_x @ self.directions[tname].transpose(0, 1))
+
+        # 应用当前任务的LoRA
+        current_task_name = f'task_{self.task_id}'
+        if current_task_name in self.lora_A_dict:
+            lora_A = self.lora_A_dict[current_task_name]
+            lora_B = self.lora_B_dict[current_task_name]
+            lora_output = lora_B(lora_A(input_x))
+            out = out + self.scales[current_task_name] * lora_output
+
+        return out
     
-    def set_task(self, task_id):
-        self.lora.set_task(task_id)
-    
-    def add_task(self, task_id):
-        self.lora.add_task(task_id)
+    def add_task(self, new_task_id):
+        """添加新任务并初始化其LoRA参数"""
+        if new_task_id == self.task_id + 1:
+            # 初始化新任务的LoRA参数
+            self._init_task_lora(new_task_id)
+            self.task_id = new_task_id
+
+    def complete_task(self):
+        """完成当前任务：计算 direction，写入本模块参数（供 state_dict 保存）"""
+        current_task_name = f'task_{self.task_id}'
+        dev = self.original_layer.weight.device
+        # 计算权重分解（W_delta = B @ A）并按行归一化得到方向矩阵 [out, in]
+        w_delta = self.lora_B_dict[current_task_name].weight @ self.lora_A_dict[current_task_name].weight
+        dir = w_delta / (torch.norm(w_delta, dim=1, keepdim=True) + 1e-12)
+        # 将direction添加到模型中（冻结方向，仅训练scale）
+        self.directions[current_task_name] = nn.Parameter(dir.to(dev), requires_grad=False)
+        self.scales[current_task_name].requires_grad = True
 
 
-def replace_linear_with_lora(module, rank=4, num_tasks=1, target_modules=None):
+
+
+def replace_linear_with_lora(module, rank=4, current_task=0, target_modules=None):
     """
     Recursively replace Linear layers with LoRA versions
     """
@@ -119,14 +123,14 @@ def replace_linear_with_lora(module, rank=4, num_tasks=1, target_modules=None):
     for name, child in module.named_children():
         if isinstance(child, nn.Linear):
             # Replace with LoRA version
-            lora_linear = LoRALinear(child, rank=rank, num_tasks=num_tasks)
+            lora_linear = LoRALinear(child, rank=rank, current_task=current_task, path=None)
             setattr(module, name, lora_linear)
         else:
             # Recursively apply to child modules
-            replace_linear_with_lora(child, rank, num_tasks, target_modules)
+            replace_linear_with_lora(child, rank, current_task, target_modules)
 
 
-def replace_attention_with_lora(module, rank=4, num_tasks=1):
+def replace_attention_with_lora(module, rank=4, current_task=0):
     """
     Replace attention q, v projections with LoRA versions
     """
@@ -134,17 +138,17 @@ def replace_attention_with_lora(module, rank=4, num_tasks=1):
         if hasattr(child, 'fc_key') and hasattr(child, 'fc_query'):
             # This looks like a scaled dot attention module - replace q,v (key,query)
             if isinstance(child.fc_key, nn.Linear):
-                child.fc_key = LoRALinear(child.fc_key, rank=rank, num_tasks=num_tasks)
+                child.fc_key = LoRALinear(child.fc_key, rank=rank, current_task=current_task)
             if isinstance(child.fc_query, nn.Linear):
-                child.fc_query = LoRALinear(child.fc_query, rank=rank, num_tasks=num_tasks)
+                child.fc_query = LoRALinear(child.fc_query, rank=rank, current_task=current_task)
         
         elif hasattr(child, 'scorer') and isinstance(child.scorer, nn.Linear):
             # This looks like a self attention module
-            child.scorer = LoRALinear(child.scorer, rank=rank, num_tasks=num_tasks)
+            child.scorer = LoRALinear(child.scorer, rank=rank, current_task=current_task)
         
         else:
             # Recursively apply to child modules
-            replace_attention_with_lora(child, rank, num_tasks)
+            replace_attention_with_lora(child, rank, current_task)
 
 
 class Module(Base):
@@ -157,230 +161,107 @@ class Module(Base):
         Initialize Seq2Seq agent with LoRA adaptation
         '''
         super().__init__(args, vocab)
-        
         # LoRA configuration
         self.lora_rank = getattr(args, 'lora_rank', 10)
-        self.num_tasks = getattr(args, 'num_tasks', 1)
+        self.current_task = getattr(args, 'current_task', 1)
         self.current_task = 0
-        
         # Apply LoRA to all linear layers and attention modules
         self._apply_lora_to_model()
-        
         # Keep track of LoRA modules for task switching
         self.lora_modules = []
-        self._collect_lora_modules()
+        # self._collect_lora_modules()
     
     def _apply_lora_to_model(self):
         """Apply LoRA to all linear layers and attention q,v projections"""
         # Replace linear layers with LoRA versions
-        replace_linear_with_lora(self, rank=self.lora_rank, num_tasks=self.num_tasks)
-        
+        replace_linear_with_lora(self, rank=self.lora_rank, current_task=self.current_task)
         # Replace attention q,v projections with LoRA versions
-        # replace_attention_with_lora(self, rank=self.lora_rank, num_tasks=self.num_tasks)
+        # replace_attention_with_lora(self, rank=self.lora_rank, current_task=self.current_task)
     
-    def _collect_lora_modules(self):
-        """Collect all LoRA modules for easy task switching"""
-        self.lora_modules = []
-        for module in self.modules():
-            if isinstance(module, (LoRALinear, MultiTaskLoRALayer)):
-                self.lora_modules.append(module)
+    # def _collect_lora_modules(self):
+    #     """Collect all LoRA modules for easy task switching"""
+    #     self.lora_modules = []
+    #     for module in self.modules():
+    #         if isinstance(module, LoRALinear):
+    #             self.lora_modules.append(module)
     
     def add_task(self, task_id):
         """Add a new task to all LoRA modules"""
-        self.num_tasks = max(self.num_tasks, task_id + 1)
-        for module in self.lora_modules:
-            if hasattr(module, 'add_task'):
+        self.current_task = max(self.current_task, task_id + 1)
+        # 为所有LoRA模块添加新任务
+        for module in self.modules():
+            if isinstance(module, LoRALinear):
                 module.add_task(task_id)
     
-    def set_task(self, task_id):
-        """Set the current task for all LoRA modules"""
-        if task_id >= self.num_tasks:
-            self.add_task(task_id)
-        
-        self.current_task = task_id
-        for module in self.lora_modules:
-            if hasattr(module, 'set_task'):
-                module.set_task(task_id)
+        print(f"Added task {task_id} with fresh LoRA parameters for all modules")
     
-    def enable_lora_training(self, task_id=None):
+    def complete_task(self, task_id):
+        """Complete a task: compute directions and store inside modules (state_dict covers all)."""
+        print(f"Completing task {task_id} and performing weight decomposition...")
+        for _, module in self.named_modules():
+            if isinstance(module, LoRALinear):
+                module.complete_task()
+        print(f"Task {task_id} decomposition completed")
+
+    @classmethod
+    def load(cls, fsave):
         """
-        Enable LoRA parameters for training while keeping original parameters frozen
+        Custom loader that prepares LoRA task placeholders before loading state_dict
+        so checkpoints containing task_1/task_2 and directions/scales can be restored.
         """
-        if task_id is not None:
-            self.set_task(task_id)
-        
-        for name, param in self.named_parameters():
-            if (f'task{self.current_task}' in name and ('lora_A' in name or 'lora_B' in name)) or ('task' in name and 'scales' in name):
-                param.requires_grad = True
-            else:
-                param.requires_grad = False
+        save = torch.load(fsave, map_location='cpu')
+        # instantiate model first
+        model = cls(save['args'], save['vocab'])
+
+        # extract model state dict (support both keys)
+        state = save.get('model', None)
+        if state is None:
+            state = save.get('model_state_dict', {})
+
+        # discover all task ids present in checkpoint
+        task_ids = set()
+        task_pattern = re.compile(r"\.task_(\d+)\.")
+        for key in state.keys():
+            if any(s in key for s in [
+                'lora_A_dict.task_', 'lora_B_dict.task_', 'scales.task_', 'directions.task_']):
+                m = task_pattern.search(key)
+                if m:
+                    task_ids.add(int(m.group(1)))
+        if not task_ids:
+            # no extra tasks found; proceed with vanilla load
+            model.load_state_dict(state, strict=False)
+        else:
+            max_tid = max(task_ids)
+            # prepare placeholders for each LoRALinear module
+            for module in model.modules():
+                if isinstance(module, LoRALinear):
+                    # ensure lora/scales exist for all tasks up to max
+                    for tid in range(0, max_tid + 1):
+                        tname = f'task_{tid}'
+                        if tname not in module.lora_A_dict:
+                            module._init_task_lora(tid)
+                        # ensure directions placeholder exists so it can be loaded
+                        if tname not in module.directions:
+                            dev = module.original_layer.weight.device
+                            dtype = module.original_layer.weight.dtype
+                            placeholder = torch.zeros(module.out_features, module.in_features, device=dev, dtype=dtype)
+                            module.directions[tname] = nn.Parameter(placeholder, requires_grad=False)
+                    # set task id to the highest available
+                    module.task_id = max(module.task_id, max_tid)
+            # now load with strict=False to be safe with any minor mismatches
+            missing, unexpected = model.load_state_dict(state, strict=False)
+            if unexpected:
+                print(f"[LoRA load] Ignored unexpected keys: {unexpected[:5]}{'...' if len(unexpected)>5 else ''}")
+            if missing:
+                print(f"[LoRA load] Missing keys count: {len(missing)}")
+
+        # optimizer (if present)
+        optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+        if 'optim' in save:
+            try:
+                optimizer.load_state_dict(save['optim'])
+            except Exception as e:
+                print(f"[LoRA load] Optimizer state load failed: {e}")
+        return model, optimizer
     
-    def disable_lora_training(self):
-        """
-        Enable all parameters for training
-        """
-        for param in self.parameters():
-            param.requires_grad = True
     
-    def get_task_lora_parameters(self, task_id=None):
-        """
-        Get LoRA parameters for a specific task
-        """
-        if task_id is None:
-            task_id = self.current_task
-        
-        task_params = []
-        task_name = f'task{task_id}'
-        
-        for name, param in self.named_parameters():
-            if task_name in name and ('lora_A' in name or 'lora_B' in name or 'scales' in name):
-                if param.requires_grad:
-                    task_params.append(param)
-        
-        return task_params
-    
-    def get_all_lora_parameters(self):
-        """
-        Get all LoRA parameters across all tasks
-        """
-        lora_params = []
-        for name, param in self.named_parameters():
-            if ('lora_A' in name or 'lora_B' in name or 'scales' in name) and param.requires_grad:
-                lora_params.append(param)
-        return lora_params
-    
-    def save_task_lora_weights(self, task_id, path):
-        """
-        Save LoRA weights for a specific task
-        """
-        task_state_dict = {}
-        task_name = f'task{task_id}'
-        
-        for name, param in self.named_parameters():
-            if task_name in name and ('lora_A' in name or 'lora_B' in name or 'scales' in name):
-                task_state_dict[name] = param.data.clone()
-        
-        torch.save({
-            'task_id': task_id,
-            'lora_rank': self.lora_rank,
-            'state_dict': task_state_dict
-        }, path)
-    
-    def load_task_lora_weights(self, path):
-        """
-        Load LoRA weights for a specific task
-        """
-        checkpoint = torch.load(path)
-        task_id = checkpoint['task_id']
-        lora_rank = checkpoint['lora_rank']
-        state_dict = checkpoint['state_dict']
-        
-        # Ensure task exists
-        if task_id >= self.num_tasks:
-            self.add_task(task_id)
-        
-        # Load weights
-        current_state_dict = self.state_dict()
-        current_state_dict.update(state_dict)
-        self.load_state_dict(current_state_dict)
-        
-        return task_id
-    
-    def save_all_lora_weights(self, path):
-        """
-        Save all LoRA weights across all tasks
-        """
-        all_lora_state_dict = {}
-        for name, param in self.named_parameters():
-            if 'lora_A' in name or 'lora_B' in name or 'scales' in name:
-                all_lora_state_dict[name] = param.data.clone()
-        
-        torch.save({
-            'num_tasks': self.num_tasks,
-            'lora_rank': self.lora_rank,
-            'current_task': self.current_task,
-            'state_dict': all_lora_state_dict
-        }, path)
-    
-    def load_all_lora_weights(self, path):
-        """
-        Load all LoRA weights across all tasks
-        """
-        checkpoint = torch.load(path)
-        num_tasks = checkpoint['num_tasks']
-        lora_rank = checkpoint['lora_rank']
-        current_task = checkpoint['current_task']
-        state_dict = checkpoint['state_dict']
-        
-        # Ensure we have enough tasks
-        for task_id in range(num_tasks):
-            if task_id >= self.num_tasks:
-                self.add_task(task_id)
-        
-        # Load weights
-        current_state_dict = self.state_dict()
-        current_state_dict.update(state_dict)
-        self.load_state_dict(current_state_dict)
-        
-        # Set current task
-        self.set_task(current_task)
-    
-    def freeze_task_lora(self, task_id):
-        """
-        Freeze LoRA parameters for a specific task
-        """
-        task_name = f'task{task_id}'
-        for name, param in self.named_parameters():
-            if task_name in name and ('lora_A' in name or 'lora_B' in name or 'scales' in name):
-                param.requires_grad = False
-    
-    def unfreeze_task_lora(self, task_id):
-        """
-        Unfreeze LoRA parameters for a specific task
-        """
-        task_name = f'task{task_id}'
-        for name, param in self.named_parameters():
-            if task_name in name and ('lora_A' in name or 'lora_B' in name or 'scales' in name):
-                param.requires_grad = True
-
-
-# Usage example:
-"""
-Dynamic Multi-task LoRA Implementation
-
-# Initialize model with LoRA configuration
-args.lora_rank = 8      # LoRA rank
-args.num_tasks = 1      # Initial number of tasks
-
-model = Module(args, vocab)
-
-# Training task 0
-model.set_task(0)
-model.enable_lora_training(task_id=0)
-optimizer = torch.optim.Adam(model.get_task_lora_parameters(0), lr=1e-4)
-
-# Add and train task 1
-model.add_task(1)
-model.set_task(1)
-model.enable_lora_training(task_id=1)
-optimizer = torch.optim.Adam(model.get_task_lora_parameters(1), lr=1e-4)
-
-# Save/load specific task weights
-model.save_task_lora_weights(0, 'task0_lora.pt')
-model.save_task_lora_weights(1, 'task1_lora.pt')
-model.load_task_lora_weights('task0_lora.pt')
-
-# Switch between tasks during inference
-model.set_task(0)  # Use task 0 LoRA layers
-output0 = model(batch)
-
-model.set_task(1)  # Use task 1 LoRA layers  
-output1 = model(batch)
-
-# Features:
-# - Automatic traversal and replacement of linear/attention layers
-# - Dynamic task addition without retraining
-# - Independent LoRA parameters per task (named task{i})
-# - Scalable to arbitrary number of tasks
-# - Task-specific training and inference
-"""

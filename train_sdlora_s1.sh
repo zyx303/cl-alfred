@@ -12,8 +12,8 @@ python models/train/train_seq2seq.py \
   --dout exp/behavior_il/sdlora/s1 \
   --lora_rank 10 \
   --lora_alpha 1.0 \
-  --adaptation_lr 1e-4 \
+  --adaptation_lr 1e-3 \
   --ortho_reg_weight 0.1 \
   --eval_period 5000 \
-  --batchsize 64 \
+  --batchsize 32 \
   --model_arch seq2seq_im_mask_lora

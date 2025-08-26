@@ -57,7 +57,7 @@ if __name__ == '__main__':
     parser.add_argument('--actor_dropout', help='dropout rate for actor fc', default=0., type=float)
 
     # other settings
-    parser.add_argument('--dec_teacher_forcing', help='use gpu', action='store_true')
+    parser.add_argument('--dec_teacher_forcing', help='enable decoder teacher forcing', action='store_true', default=True)
     parser.add_argument('--temp_no_history', help='use gpu', action='store_true')
     parser.add_argument('--panoramic', help='use panoramic', action='store_true', default=True)
     parser.add_argument('--orientation', help='use orientation features', action='store_true')
@@ -80,9 +80,9 @@ if __name__ == '__main__':
     # Train
     parser.add_argument("--opt_name", type=str, default="adam", help="Optimizer name")
     parser.add_argument("--sched_name", type=str, default="default", help="Scheduler name")
-    parser.add_argument("--batchsize", type=int, default=32, help="batch size")
-    parser.add_argument("--lr", type=float, default=1e-3, help="learning rate")
-    parser.add_argument("--epochs_per_task", type=int, default=1, help="number of epochs for each task (offline per-task training)")
+    parser.add_argument("--batchsize", type=int, default=64, help="batch size")
+    parser.add_argument("--lr", type=float, default=1e-4, help="learning rate")
+    parser.add_argument("--epochs_per_task", type=int, default=15, help="number of epochs for each task (offline per-task training)")
 
     # Regularization
     parser.add_argument("--reg_coef", type=int, default=100, help="weighting for the regularization loss term")
