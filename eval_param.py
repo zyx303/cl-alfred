@@ -168,19 +168,83 @@ if __name__ == '__main__':
         vocab = torch.load(os.path.join(args.data, "%s.vocab" % args.pp_folder))
 
     # load model
-    M = import_module('model.{}'.format(args.model_arch))
-    if args.resume:
-        print("Loading: " + args.resume)
-        model, optimizer = M.Module.load(args.resume)
-    else:
-        model = M.Module(args, vocab)
-        optimizer = None
+    # M = import_module('model.{}'.format(args.model_arch))
+    # if args.resume:
+    #     print("Loading: " + args.resume)
+    #     model, optimizer = M.Module.load(args.resume)
+    # else:
+    #     model = M.Module(args, vocab)
+    #     optimizer = None
 
-    # to gpu
-    if args.gpu:
-        model = model.to(torch.device('cuda'))
-        if not optimizer is None:
-            optimizer_to(optimizer, torch.device('cuda'))
+    # # to gpu
+    # if args.gpu:
+    #     model = model.to(torch.device('cuda'))
+    #     if not optimizer is None:
+    #         optimizer_to(optimizer, torch.device('cuda'))
 
-    # start train loop
-    model.run_train(args=args)
+    ############################
+    # print('='*40)
+    # print(f'model_name: {args.resume}')
+    # 计算并打印可训练参数的总数
+    # print('Total # trainable params:', sum(p.numel() for p in model.parameters() if p.requires_grad))
+    ############################
+    
+    # 打印param的名字和尺寸
+    # for name, param in model.named_parameters():
+    #     # if param.requires_grad:
+    #     print(name, param.size(),f' - requires_grad: {param.requires_grad}')
+    #     # 打印enc_att_goal.scorer.lora_B的value
+    #     if  'enc_att_goal.scorer.lora_B' in name:
+    #         print('lora_B value:', param)
+
+
+    
+    
+    model1_path = 'exp/behavior_il_new/er/s1/net_epoch_000022510_look_at_obj_in_light.pth'
+    M1 = import_module('models.model.seq2seq_im_mask')
+    model2_path = 'exp/behavior_il_new/olora/s1/net_epoch_000022510_look_at_obj_in_light.pth'
+    M2 = import_module('models.model.seq2seq_im_mask_olora')
+
+    model1, optimizer1 = M1.Module.load(model1_path)
+    model2, optimizer2 = M2.Module.load(model2_path)
+    # print(optimizer1)
+    # print('-'*40)
+    # print(optimizer2)
+    # print('-'*40)
+
+    # 对比enc_att_goal.scorer.weight 和enc_att_goal.scorer.lora_A @ enc_att_goal.scorer.lora_B+enc_att_goal.scorer.original_layer.weight 的差异
+    # 从model1中提取enc_att_goal.scorer.weight
+    for name1, param1 in model1.named_parameters():
+        if  'enc_att_goal.scorer.weight' in name1:
+            weight1 = param1
+            print('From model1:', name1, weight1.size())
+            break
+    
+    # 从model2中提取enc_att_goal.scorer.lora_A, enc_att_goal.scorer.lora_B, enc_att_goal.scorer.original_layer.weight
+    for name2, param2 in model2.named_parameters():
+        if  'enc_att_goal.scorer.lora_A' in name2:
+            lora_A = param2
+            print('From model2:', name2, lora_A.size())
+        elif 'enc_att_goal.scorer.lora_B' in name2:
+            lora_B = param2
+            print('From model2:', name2, lora_B.size())
+        elif 'enc_att_goal.scorer.original_layer.weight' in name2:
+            original_weight = param2
+            print('From model2:', name2, original_weight.size())
+    
+    # 计算lora_A @ lora_B
+    lora_product = torch.matmul(lora_B, lora_A)
+    print('lora_A @ lora_B size:', lora_product.size())
+    # 计算lora_A @ lora_B + original_weight
+    combined_weight = lora_product + original_weight
+    print('Combined weight size:', combined_weight.size())
+
+    # 打印前20个元素进行对比
+    print('First 20 elements of model1 weight:', weight1.view(-1)[:20])
+    print('First 20 elements of combined weight:', combined_weight.view(-1)[:20])
+
+    # 计算weight1和combined_weight的差异
+    if weight1.size() == combined_weight.size():
+        difference = torch.norm(weight1 - combined_weight).item()
+        print('Difference (Frobenius norm) between model1 weight and combined weight:', difference)
+

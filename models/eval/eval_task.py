@@ -315,6 +315,17 @@ class EvalTask(Eval):
             task_failures = [f for f in (list(failures)) if f['type'] == task_type]
             if len(task_successes) > 0 or len(task_failures) > 0:
                 results[task_type] = cls.get_metrics(task_successes, task_failures)
+                # Print task-specific results
+                print(f"=== {task_type} ===")
+                print("SR: %d/%d = %.5f" % (results[task_type]['success']['num_successes'],
+                                            results[task_type]['success']['num_evals'],
+                                            results[task_type]['success']['success_rate']))
+                print("PLW SR: %.5f" % (results[task_type]['path_length_weighted_success_rate']))
+                print("GC: %d/%d = %.5f" % (results[task_type]['goal_condition_success']['completed_goal_conditions'],
+                                            results[task_type]['goal_condition_success']['total_goal_conditions'],
+                                            results[task_type]['goal_condition_success']['goal_condition_success_rate']))
+                print("PLW GC: %.5f" % (results[task_type]['path_length_weighted_goal_condition_success_rate']))
+                print("=" * (len(task_type) + 8))
             else:
                 results[task_type] = {}
 
@@ -374,3 +385,29 @@ class EvalTask(Eval):
         save_path = os.path.join(save_path, os.path.basename(self.args.model_path)[:-4]+'_task_results_' + self.args.eval_split + '.json')
         with open(save_path, 'w') as r:
             json.dump(results, r, indent=4, sort_keys=True)
+        
+        # Print final task-specific results summary
+        print("\n" + "=" * 80)
+        print("FINAL TASK-SPECIFIC RESULTS SUMMARY")
+        print("=" * 80)
+        
+        task_types = ['pick_and_place_simple', 'pick_clean_then_place_in_recep', 'pick_heat_then_place_in_recep',
+                      'pick_cool_then_place_in_recep', 'pick_two_obj_and_place', 'look_at_obj_in_light',
+                      'pick_and_place_with_movable_recep']
+        
+        for task_type in task_types:
+            if task_type in results['results'] and results['results'][task_type]:
+                task_results = results['results'][task_type]
+                print(f"\n{task_type}:")
+                print(f"  Success Rate: {task_results['success']['success_rate']:.5f} " +
+                      f"({task_results['success']['num_successes']}/{task_results['success']['num_evals']})")
+                print(f"  Path Length Weighted SR: {task_results['path_length_weighted_success_rate']:.5f}")
+                print(f"  Goal Condition Success: {task_results['goal_condition_success']['goal_condition_success_rate']:.5f} " +
+                      f"({task_results['goal_condition_success']['completed_goal_conditions']}/{task_results['goal_condition_success']['total_goal_conditions']})")
+                print(f"  Path Length Weighted GC: {task_results['path_length_weighted_goal_condition_success_rate']:.5f}")
+            else:
+                print(f"\n{task_type}: No evaluations")
+        
+        print("\n" + "=" * 80)
+        print(f"Results saved to: {save_path}")
+        print("=" * 80)

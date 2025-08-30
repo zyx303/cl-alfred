@@ -168,7 +168,11 @@ class Module(nn.Module):
             # 构建 DataLoader（stream 批次）
             from utils.data_loader import StreamDataset
             
-            stream_batch_size = batch_size // 2
+            # memory 不为空
+            if hasattr(cl_method, 'memory') and len(cl_method.memory) > 0:
+                stream_batch_size = batch_size // 2
+            else:
+                stream_batch_size = batch_size
 
             stream_ds = StreamDataset(datalist=cur_train_datalist,
                                       cls_list=cl_method.exposed_classes,
@@ -254,11 +258,11 @@ class Module(nn.Module):
                                 cl_method.update_memory(sample)
 
                 # 每个 epoch 结束做一次评估
-                if hasattr(cl_method, 'evaluation') and hasattr(cl_method, 'report_test'):
-                    eval_seen = cl_method.evaluation(test_datalist_seen, samples_cnt, batch_size)
-                    cl_method.report_test(samples_cnt, eval_seen, tag='valid_seen')
-                    eval_unseen = cl_method.evaluation(test_datalist_unseen, samples_cnt, batch_size)
-                    cl_method.report_test(samples_cnt, eval_unseen, tag='valid_unseen')
+                # if hasattr(cl_method, 'evaluation') and hasattr(cl_method, 'report_test'):
+                #     eval_seen = cl_method.evaluation(test_datalist_seen, samples_cnt, batch_size)
+                #     cl_method.report_test(samples_cnt, eval_seen, tag='valid_seen')
+                #     eval_unseen = cl_method.evaluation(test_datalist_unseen, samples_cnt, batch_size)
+                #     cl_method.report_test(samples_cnt, eval_unseen, tag='valid_unseen')
 
             # 任务后钩子
             if hasattr(cl_method, 'online_after_task'):
@@ -272,6 +276,7 @@ class Module(nn.Module):
                 'optim': cl_method.optimizer.state_dict(),
                 'args': self.args,
                 'vocab': self.vocab,
+                'r_sum': self.r_sum if hasattr(self, 'r_sum') else 0,
             }, os.path.join(args.dout, 'net_epoch_%09d_%s.pth' % (samples_cnt, last_klass)))
 
 
