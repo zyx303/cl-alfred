@@ -126,6 +126,10 @@ class LoRALinear(nn.Module):
             base_res = self.lora_B(self.lora_A(x))
             out = out + self.scaling * base_res
         
+        # eval
+        if not self.training:
+            return out
+        
         # new residual (trainable)
         new_res = self.loranew_B(self.loranew_A(x))
         out = out + self.scaling * new_res

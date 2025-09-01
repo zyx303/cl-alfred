@@ -176,6 +176,7 @@ class Module(nn.Module):
 
             stream_ds = StreamDataset(datalist=cur_train_datalist,
                                       cls_list=cl_method.exposed_classes,
+                                      augmentation=self.use_clip,
                                       data_dir=getattr(args, 'data_dir', None))
             stream_loader = DataLoader(stream_ds, batch_size=stream_batch_size, shuffle=True,
                                        drop_last=False, collate_fn=lambda x: x)
@@ -209,8 +210,14 @@ class Module(nn.Module):
                     # 前向 & 反向
                     batch = [(self.load_task_json(task), swapColor) for task, swapColor in data]
                     feat = self.featurize(batch)
-
                     out = self.forward(feat)
+
+                    # ####### debug
+                    # print(f'feat keys: {feat.keys()}')
+                    # print(f'out keys: {out.keys()}')
+                    # exit(0)
+                    # ######
+
                     cl_method.optimizer.zero_grad()
                     loss_dict = self.compute_loss(out, batch, feat)
                     sum_loss = sum(loss_dict.values())

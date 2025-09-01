@@ -14,17 +14,17 @@ class ER:
         self.seen = 0
 
         self.device = torch.device("cuda")
-        self.model_name = kwargs["model_name"]
-        self.opt_name = kwargs["opt_name"]
+        # self.model_name = kwargs["model_name"]
+        # self.opt_name = kwargs["opt_name"]
         self.sched_name = kwargs["sched_name"]
-        if self.sched_name == "default":
+        if self.sched_name == "default" :
             self.sched_name = 'exp_reset'
         self.lr = kwargs["lr"]
 
         self.memory_size = kwargs["memory_size"]
         self.data_dir = kwargs["data_dir"]
 
-        self.online_iter = kwargs["online_iter"]
+        # self.online_iter = kwargs["online_iter"]
         self.batch_size = kwargs["batchsize"]
         self.temp_batchsize = kwargs["temp_batchsize"]
         if self.temp_batchsize is None:

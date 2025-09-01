@@ -2,14 +2,7 @@ import torch
 import torch.nn as nn
 from torchvision import models, transforms
 from autoaugment import ImageNetPolicy
-
-# Optional: OpenAI CLIP for ViT-L/14@336px
-try:
-    import clip  # from openai/CLIP
-    _HAS_CLIP = True
-except Exception:
-    _HAS_CLIP = False
-
+from .clip import _CLIPViTL14_336
 
 class Resnet18(object):
     '''
@@ -141,51 +134,3 @@ class Resnet(object):
                 out.append(self.resnet_model.extract(b))
         return torch.cat(out, dim=0)
 
-
-class _CLIPViTL14_336(object):
-    """
-    Wrapper to expose CLIP ViT-L/14@336px patch-token features as [B, C, N].
-    C is the transformer width (e.g., 1024), N is number of patches (24x24=576).
-    """
-
-    def __init__(self, args, eval=True, share_memory=False):
-        # load model and preprocess
-        self.model, self.preprocess = clip.load("ViT-L/14@336px", device="cuda" if args.gpu else "cpu")
-        if eval:
-            self.model.eval()
-        if share_memory:
-            try:
-                self.model.share_memory()
-            except Exception:
-                pass
-        self.gpu = args.gpu
-
-    def _encode_patches(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        Return patch embeddings (without CLS) as [B, C, N].
-        """
-        visual = self.model.visual
-        # follow CLIP forward but retain all tokens
-        x = visual.conv1(x)  # shape = [*, width, grid, grid]
-        x = x.reshape(x.shape[0], x.shape[1], -1)  # [B, width, N]
-        x = x.permute(0, 2, 1)  # [B, N, width]
-        cls = visual.class_embedding.to(x.dtype)
-        cls = cls + torch.zeros(x.shape[0], 1, cls.shape[0], dtype=x.dtype, device=x.device)
-        x = torch.cat([cls, x], dim=1)  # [B, 1+N, width]
-        x = x + visual.positional_embedding.to(x.dtype)
-        x = visual.ln_pre(x)
-        x = x.permute(1, 0, 2)  # NLD -> LND
-        x = visual.transformer(x)
-        x = x.permute(1, 0, 2)  # LND -> NLD
-        # ln_post is applied to class token in CLIP; we apply to all tokens for stability
-        x = visual.ln_post(x)
-        if hasattr(visual, 'proj') and visual.proj is not None:
-            x = x @ visual.proj
-        # drop CLS, keep patches
-        x = x[:, 1:, :]  # [B, N, C]
-        x = x.permute(0, 2, 1).contiguous()  # [B, C, N]
-        return x
-
-    def extract(self, x: torch.Tensor) -> torch.Tensor:
-        with torch.no_grad():
-            return self._encode_patches(x)

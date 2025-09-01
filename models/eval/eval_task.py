@@ -304,7 +304,6 @@ class EvalTask(Eval):
                                     results['all']['goal_condition_success']['goal_condition_success_rate']))
         print("PLW GC: %.5f" % (results['all']['path_length_weighted_goal_condition_success_rate']))
         print("-------------")
-        sys.stdout.flush()
 
         # task type specific results
         task_types = ['pick_and_place_simple', 'pick_clean_then_place_in_recep', 'pick_heat_then_place_in_recep',
@@ -329,6 +328,7 @@ class EvalTask(Eval):
             else:
                 results[task_type] = {}
 
+        sys.stdout.flush()
         lock.release()
 
     @classmethod

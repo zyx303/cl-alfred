@@ -9,11 +9,12 @@ from collections import defaultdict
 
 
 class StreamDataset(Dataset):
-    def __init__(self, datalist, cls_list, data_dir=None):
+    def __init__(self, datalist, cls_list, data_dir=None , augmentation=None):
         self.images = []
         self.labels = []
         self.cls_list = cls_list
         self.data_dir = data_dir
+        self.augmentation = augmentation
 
         for data in datalist:
             self.images.append(data)
@@ -34,7 +35,10 @@ class StreamDataset(Dataset):
     @torch.no_grad()
     def get_data(self):
         data = dict()
-        data['batch'] = [(img['task'], 0) for img in self.images]
+        if self.augmentation is True:
+            data['batch'] = [(img['task'], random.choice(range(7))) for img in self.images]
+        else:
+            data['batch'] = [(img['task'], 0) for img in self.images]
         return data
 
 

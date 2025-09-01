@@ -9,14 +9,22 @@ from torch.nn.utils.rnn import pad_sequence, pack_padded_sequence, pad_packed_se
 from model.seq2seq import Module as Base
 from models.utils.metric import compute_f1, compute_exact
 from gen.utils.image_util import decompress_mask
+from PIL import Image
 import concurrent.futures
 from typing import List
+import gen.constants as constants
 
 try:
     from models.nn.llama_encoder import LlamaTextEncoder, LlamaEncoderConfig
     _HAS_LLaMA = True
 except Exception:
     _HAS_LLaMA = False
+
+try:
+    from models.nn.clip import _CLIPViTL14_336
+    _HAS_CLIP = True
+except ImportError:
+    _HAS_CLIP = False
 # from utils.download_feat import download_hf_patterns
 
 import constants
@@ -33,10 +41,16 @@ class Module(Base):
         super().__init__(args, vocab)
 
         # choose language encoder: LSTM (default) or LLaMA-2-7B
-        self.use_llama = getattr(args, 'lang_model', '').lower() in {'llama2-7b', 'llama-2-7b', 'llama2'}
+        self.use_llama = getattr(args, 'use_llama', False)
+        self.use_clip = getattr(args, 'use_clip', False)
+        if self.use_clip:
+            assert _HAS_CLIP, "CLIP not available; please ensure openai-clip is installed."
+            self.visual_model = _CLIPViTL14_336(args, eval=True)
+        
         if self.use_llama:
             assert _HAS_LLaMA, "Transformers LLaMA encoder not available; please ensure transformers is installed."
-            llama_model_name = getattr(args, 'llama_model_name', 'meta-llama/Llama-2-7b-hf')
+            # 使用本地模型路径
+            llama_model_name = getattr(args, 'llama_model_name', './initial_model/llama')
             llama_dtype = getattr(args, 'llama_dtype', 'float16')
             llama_max_length = int(getattr(args, 'llama_max_length', 512))
             device = 'cuda' if args.gpu else 'cpu'
@@ -174,37 +188,77 @@ class Module(Base):
                 # low-level valid interact
                 feat['action_low_valid_interact'].append([a['valid_interact'] for a in ex['num']['action_low']])
 
-            # 如果root不存在，下载
-            # if not os.path.exists(self.get_task_root(ex)):
-            #     download_hf_patterns(
-            #         repo_id="byeonghwikim/abp_dataset",
-            #         local_dir=self.args.data,
-            #         folder_pattern=f"{ex['split']}/{ex['task_type']}*/**",
-            #         repo_type="dataset"
-            #     )
+            if self.use_clip:
+                if load_frames and not self.test_mode:
+                    root = self.get_task_root(ex) # eg : data/json_feat_2.1.0/train/look_at_obj_in_light-KeyChain-None-FloorLamp-223/trial_T20190909_110146_114031
+                    image_folder = '/data/yongxi/image/'
+                    #/home/yongxi/work/cl-alfred/data/json_feat_2.1.0/train/look_at_obj_in_light/look_at_obj_in_light-AlarmClock-None-DeskLamp-301/trial_T20190907_174127_043461/high_res_images_panoramic
+                    image_root = root.replace('data/json_feat_2.1.0/', image_folder) 
+                    image_root = image_root.replace('train/', f"train/{ex['task_type']}/") 
+                    image_root = os.path.join(image_root, 'high_res_images_panoramic')
+                    
+                    # Panoramic directions: left, up, front, down, right
+                    ds = ['left', 'up', 'front', 'down', 'right']
 
-            # load Resnet features from disk
-            if load_frames and not self.test_mode:
-                root = self.get_task_root(ex)
-                path = os.path.join(root, self.feat_pt)
-                valid_len = len(feat['action_low'][-1])
-                to_load.append((path, valid_len))
+                    # Load and process images for each direction
+                    imgs = {}
+                    if os.path.exists(image_root):
+                        image_files = sorted(os.listdir(image_root))
+                        for i, d in enumerate(ds):
+                            direction_imgs = []
+                            for p in image_files:
+                                img_path = os.path.join(image_root, p)
+                                if os.path.exists(img_path):
+                                    # Load image and crop to get direction-specific view
+                                    img = Image.open(img_path)
+                                    # Crop panoramic image: each direction is 300px wide
+                                    cropped_img = img.crop((i*300, 0, (i+1)*300, 300))
+                                    direction_imgs.append(cropped_img)
+                            imgs[d] = direction_imgs
+                    else:
+                        # Fallback: create dummy images if path doesn't exist
+                        dummy_img = Image.new('RGB', (300, 300), color='black')
+                        for d in ds:
+                            imgs[d] = [dummy_img] * max(1, len(feat['action_low'][-1]) if feat['action_low'] else 1)
 
-        if load_frames and not self.test_mode and len(to_load) > 0:
-            paths = [p for p, _ in to_load]
-            if self.enable_io_parallel and self.num_io_workers > 1:
-                with concurrent.futures.ThreadPoolExecutor(max_workers=self.num_io_workers) as pool:
-                    ims = list(pool.map(lambda p: torch.load(p, map_location='cpu'), paths))
+                    # Encode images using CLIP
+                    with torch.no_grad():
+                        features = {}
+                        for direction, img_list in imgs.items():
+                            if img_list:
+                                # Encode images in batches
+                                feat_list = self.visual_model.encode_image(img_list)
+                                features[direction] = feat_list
+                            else:
+                                # Create dummy features if no images
+                                device = torch.device('cuda' if self.args.gpu else 'cpu')
+                                features[direction] = torch.zeros((1, self.visual_model.output_channels), device=device)
+
+                    # Assign features to appropriate frame types
+                    action_len = len(feat['action_low'][-1]) if feat['action_low'] else 1
+                    feat['frames'].append(features['front'][:action_len])
+                    feat['frames_left'].append(features['left'][:action_len])
+                    feat['frames_up'].append(features['up'][:action_len])
+                    feat['frames_down'].append(features['down'][:action_len])
+                    feat['frames_right'].append(features['right'][:action_len])
             else:
-                ims = [torch.load(p, map_location='cpu') for p in paths]
+                if load_frames and not self.test_mode:
+                    root = self.get_task_root(ex)
+                    # if swapColor in [0]:
+                    im = torch.load(os.path.join(root, self.feat_pt))
+                    # elif swapColor in [1, 2]:
+                    #     im = torch.load(os.path.join(root, 'feat_conv_colorSwap{}_panoramic.pt'.format(swapColor)))
+                    # elif swapColor in [3, 4, 5, 6]:
+                    #     im = torch.load(os.path.join(root, 'feat_conv_onlyAutoAug{}_panoramic.pt'.format(swapColor - 2)))
+                    
+                    feat['frames'].append(im[2][:len(feat['action_low'][-1])])
 
-            # 依 batch 顺序写回 feat
-            for (path, valid_len), im in zip(to_load, ims):
-                feat['frames'].append(im[2][:valid_len])
-                feat['frames_left'].append(im[0][:valid_len])
-                feat['frames_up'].append(im[1][:valid_len])
-                feat['frames_down'].append(im[3][:valid_len])
-                feat['frames_right'].append(im[4][:valid_len])
+                    feat['frames_left'].append(im[0][:len(feat['action_low'][-1])])
+                    feat['frames_up'].append(im[1][:len(feat['action_low'][-1])])
+                    feat['frames_down'].append(im[3][:len(feat['action_low'][-1])])
+                    feat['frames_right'].append(im[4][:len(feat['action_low'][-1])]) 
+
+
 
         # tensorization and padding
         for k, v in feat.items():

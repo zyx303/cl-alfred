@@ -76,6 +76,7 @@ if __name__ == '__main__':
 
     # Model
     parser.add_argument("--model_name", type=str, default="resnet18", help="Model name")
+    parser.add_argument("--visual_model", type=str, default="resnet18", help="Model name")
 
     # Train
     parser.add_argument("--opt_name", type=str, default="adam", help="Optimizer name")
@@ -127,6 +128,13 @@ if __name__ == '__main__':
     # O-LoRA regularization weights
     parser.add_argument("--lamda_1", type=float, default=0.5, help="Orthogonal regularization weight (O-LoRA)")
     parser.add_argument("--lamda_2", type=float, default=0.0, help="L2 regularization weight for loranew params (O-LoRA)")
+
+    # use llama/clip
+    parser.add_argument("--use_clip", action="store_true", help="Use CLIP image encoder",default=False)
+    parser.add_argument("--use_llama", action="store_true", help="Use LLaMA text encoder",default=False)
+
+
+
 
     # args and init
     args = parser.parse_args()
